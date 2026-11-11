@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>这张相纸够不够 · 拍立得相纸、照片墙与相册清点（别买多、别拍到一半没纸）</title>
+<meta name="description" content="拍照之前先算清三件事：相纸要买几包（只能整包买，多出来的余料值多少钱）、这面墙摆得下几张相框、相册内页要买多少才装得下。全部由你填数字，页面不联网、不查行情价、不内置任何品牌规格。">
+<style>
+  :root{
+    --bg:#f7f5f1; --card:#ffffff; --paper:#fffdf8; --ink:#1b1815; --ink2:#57514a; --ink3:#867e74;
+    --line:#e7e2d9; --line2:#d0c9bd; --brand:#1f5f6b; --brand2:#e8f2f3;
+    --frame:#3a322a; --mat:#f2ece1;
+    --good:#166b3c; --goodbg:#e7f4ec; --warn:#8a5a00; --warnbg:#fdf3e2; --bad:#a3251b; --badbg:#fcebe9;
+    --radius:12px; --w:1000px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--w);margin:0 auto;padding:16px 14px 90px}
+  header.top{padding:2px 2px 4px}
+  h1{margin:0 0 6px;font-size:25px;line-height:1.35;letter-spacing:.2px}
+  .lede{margin:0;color:var(--ink2);font-size:14.5px}
+  .badges{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px}
+  .badge{font-size:12px;padding:3px 9px;border-radius:999px;background:#fff;border:1px solid var(--line2);color:var(--ink2)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:12px 0 0;box-shadow:0 1px 2px rgba(40,32,24,.04)}
+  .card > h2{margin:0 0 4px;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card > h2 .step{font-size:12px;font-weight:700;color:#fff;background:var(--brand);border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .card > .hint{margin:0 0 11px;color:var(--ink2);font-size:13.5px}
+  h3.sec{margin:14px 0 6px;font-size:13.5px;color:var(--ink2);letter-spacing:.3px;border-bottom:1px dashed var(--line);padding-bottom:4px}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:4px}
+  .field label .sub{color:var(--ink3);font-size:12px}
+  input[type=text],select{width:100%;padding:9px 11px;border:1px solid var(--line2);border-radius:9px;font-size:14.5px;background:#fff;color:var(--ink);font-variant-numeric:tabular-nums}
+  input[type=text]:focus,select:focus{outline:2px solid #bcd9dd;border-color:var(--brand)}
+  input.bad,select.bad{border-color:var(--bad);background:var(--badbg)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+  /* 栅格子项默认按内容最小宽度撑开，窄屏会把整页顶宽：显式允许收缩 */
+  .cols > *{min-width:0}
+  @media(min-width:900px){ .cols{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start} }
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{cursor:pointer;font:inherit;font-size:13.5px;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:#fff;color:var(--ink2)}
+  .chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .btn{cursor:pointer;font:inherit;font-size:13.5px;padding:8px 13px;border-radius:9px;border:1px solid var(--line2);background:#fff;color:var(--ink)}
+  .btn:hover{border-color:var(--brand);color:var(--brand)}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .hidden{display:none !important}
+  /* ── 判定票（票据式） ── */
+  .ticket{border:1px solid var(--line2);border-radius:12px;background:var(--paper);padding:12px 14px;position:relative}
+  .ticket:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:12px 12px 0 0;background:var(--brand)}
+  .ticket .vt{font-size:18px;font-weight:700;margin:6px 0 2px}
+  .ticket .vw{font-size:13.5px;color:var(--ink2)}
+  .ticket.ok .vt{color:var(--good)} .ticket.ok:before{background:var(--good)}
+  .ticket.warn .vt{color:var(--warn)} .ticket.warn:before{background:var(--warn)}
+  .ticket.tight .vt{color:var(--warn)} .ticket.tight:before{background:var(--warn)}
+  .ticket.bad .vt{color:var(--bad)} .ticket.bad:before{background:var(--bad)}
+  /* ── 读数条 ── */
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px}
+  .readout > *{min-width:0}
+  @media(max-width:760px){ .readout{grid-template-columns:repeat(auto-fit,minmax(100px,1fr))} }
+  /* 375px：三列时每格只有约 96px，「¥1,224.00」会被截成两行（本轮目检发现）→ 收到 88px */
+  @media(max-width:430px){ .readout{grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:7px}
+    .ro .v{font-size:14.5px} .ro .l,.ro .s{font-size:10.5px} }
+  .ro{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px 10px}
+  .ro .l{font-size:11.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ro .v{overflow-wrap:anywhere}
+  .ro .v{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px}
+  .ro .s{font-size:11.5px;color:var(--ink3);line-height:1.45}
+  /* ── 清点单 ── */
+  .ledger{width:100%;border-collapse:collapse;font-size:13.5px}
+  .ledger th{text-align:left;font-size:12px;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line2);padding:5px 6px}
+  .ledger td{padding:5px 6px;border-bottom:1px dotted var(--line);vertical-align:top}
+  .ledger td.k{width:34%}
+  .ledger td.v{width:26%;font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+  .ledger td.n{color:var(--ink3);font-size:12.5px}
+  .ledger td.v,.ledger td.n{text-wrap:pretty}
+  .ledger tr:last-child td{border-bottom:0}
+  .ledger .secrow td{background:var(--brand2);font-weight:700;color:var(--brand);font-size:12.5px;letter-spacing:.5px}
+  @media(max-width:640px){
+    /* 折成堆叠卡时必须退回 auto：table-layout:fixed 会按桌面列宽比例分配，
+       卡里的「结果：137 张」会在数字和单位之间硬断行、长条目名字也会断成两行 */
+    .ledger{width:100%;table-layout:auto}
+    /* 单元格必须显式改成 block：tr 改成 block 之后，td 仍是 display:table-cell，
+       浏览器会继续用「表格列」去排它们（本轮实测：结果单元格被压到 78px、
+       「137 张」在数字与单位之间硬断行） */
+    .ledger td,.ledger td.k,.ledger td.v,.ledger td.n{display:block;width:auto;white-space:normal;overflow-wrap:break-word;text-wrap:pretty}
+    .ledger thead{display:none}
+    .ledger tr{display:block;border:1px solid var(--line);border-radius:9px;margin-bottom:7px;padding:6px 8px;background:#fff}
+    .ledger col{width:auto}
+    .ledger td{display:block;border:0;padding:1px 0;width:auto;white-space:normal}
+    .ledger td.v:before{content:"结果：";color:var(--ink3);font-weight:400;font-family:inherit}
+    .ledger td.v{white-space:normal}
+    .ledger td.n:before{content:"说明：";color:var(--ink3)}
+    .ledger .secrow td:before{content:""}
+  }
+  /* ── 照片墙 ── */
+  .wallbox{border:1px solid var(--line2);border-radius:10px;background:var(--mat);padding:10px;overflow:hidden;max-width:100%}
+  .wallgrid{display:grid;gap:0;justify-content:start;align-content:start}
+  .fr{background:#fff;border-radius:3px;box-shadow:0 1px 2px rgba(40,32,24,.13);position:relative}
+  .fr:before{content:"";position:absolute;inset:2px;border-radius:2px;background:linear-gradient(135deg,#dfe9ea,#f3efe6 45%,#e5ded2)}
+  .wallmeta{margin-top:8px;font-size:12.5px;color:var(--ink2);display:flex;flex-wrap:wrap;gap:10px}
+  .papercmp{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:6px}
+  .pc{text-align:center;font-size:11.5px;color:var(--ink3)}
+  .pc .r{border:1px solid var(--frame);background:#fff;position:relative;margin:0 auto 4px}
+  .pc .r:before{content:"";position:absolute;inset:3px;background:linear-gradient(135deg,#dfe9ea,#f3efe6 45%,#e5ded2)}
+  .pc.on .r{outline:2px solid var(--brand);outline-offset:2px}
+  .pc.on{color:var(--brand);font-weight:700}
+  /* ── 建议 ── */
+  .adv{border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:9px;background:#fff;padding:9px 11px;margin-top:8px}
+  .adv .t{font-weight:700;font-size:14px}
+  .adv .b{font-size:13px;color:var(--ink2)}
+  .adv .btnrow{margin-top:7px}
+  /* ── 自检 ── */
+  /* 自检与敏感性里的长文案必须能换行：原来是个不换行的 flex 行，
+     1280px 桌面端右侧「（18 × 8 = 144）」这类细节会被卡片裁掉（本轮目检发现） */
+  /* 名字与括号里的算式排在同一段里换行：name 用 inline 才不会被 flex 推到下一行 */
+  .chk{font-size:12.5px;border-bottom:1px dotted var(--line);padding:3px 0;display:flex;gap:7px;align-items:baseline}
+  .chk .m{flex:0 0 42px;font-weight:700}
+  .chk.pass .m{color:var(--good)} .chk.fail .m{color:var(--bad)}
+  .chk .t{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+  .chk .n{display:inline}
+  .chk .d{color:var(--ink3);display:inline}
+  .err{background:var(--badbg);border:1px solid #e5b6b1;border-radius:9px;padding:8px 10px;font-size:13.5px;color:#7d1c14;margin-bottom:9px}
+  .err ul{margin:4px 0 0 18px;padding:0}
+  .footbar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line2);backdrop-filter:blur(6px);z-index:20}
+  .footbar .in{max-width:var(--w);margin:0 auto;padding:8px 14px;display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;font-size:13px}
+  .footbar b{font-variant-numeric:tabular-nums}
+  .notes{font-size:12.5px;color:var(--ink3);margin:0;padding-left:18px}
+  .notes li{margin:3px 0}
+  .sens{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+  .sens th{text-align:left;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line2);padding:4px 5px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sens td{padding:4px 5px;border-bottom:1px dotted var(--line);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;vertical-align:top}
+  .sens col.c1{width:22%} .sens col.c2{width:9%} .sens col.c3{width:12%}
+  .sens col.c4{width:17%} .sens col.c5{width:16%} .sens col.c6{width:24%}
+  @media(max-width:640px){
+    .sens{width:100%;table-layout:auto}
+    .sens col{width:auto}
+    .sens td{white-space:normal;overflow-wrap:anywhere}
+    .sens thead{display:none}
+    .sens tr{display:block;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;padding:5px 8px}
+    .sens td{display:block;width:auto;border:0;padding:1px 0}
+  }
+  .spinner{color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>这张相纸够不够</h1>
+    <p class="lede">拍照之前把三件事算清：相纸要买几包（只能整包买，多出来的余料值多少钱）、这面墙摆得下几张相框、相册内页要买多少才装得下。</p>
+    <div class="badges">
+      <span class="badge">不联网 · 不查行情价</span>
+      <span class="badge">不内置任何品牌规格</span>
+      <span class="badge">数字全部由你填，默认值是虚构示例</span>
+      <span class="badge">可导出 CSV / MD / PNG / JSON</span>
+    </div>
+  </header>
+
+  <!-- ═══ 结论票 ═══ -->
+  <section class="card" id="sec-verdict">
+    <h2>结论 <span class="step">相纸账</span></h2>
+    <div class="ticket" id="ticket">
+      <div class="vt" id="v-title">—</div>
+      <div class="vw" id="v-why">—</div>
+    </div>
+    <div class="readout" id="kpis" style="margin-top:11px"></div>
+  </section>
+
+  <!-- ═══ 出错提示 ═══ -->
+  <section class="card err hidden" id="sec-err">
+    <div id="err-body"></div>
+  </section>
+
+  <div class="cols" id="cols">
+
+    <!-- ═══ 左列：清点单 ═══ -->
+    <div>
+      <section class="card" id="sec-ledger">
+        <h2>清点单 <span class="step">逐行可复算</span></h2>
+        <p class="hint">每一行都是「你填的数字 → 算出来的结果」，右侧说明写清这一行是怎么来的。</p>
+        <table class="ledger" id="ledger">
+          <thead><tr><th>条目</th><th>结果</th><th>说明</th></tr></thead>
+          <tbody id="ledger-body"></tbody>
+        </table>
+      </section>
+
+      <section class="card" id="sec-advice">
+        <h2>下一步能改什么</h2>
+        <p class="hint">每条建议都能一键填回输入，按完立刻重算。</p>
+        <div id="advice-body"></div>
+      </section>
+
+      <section class="card" id="sec-selfcheck">
+        <h2>算式自检 <span class="badge" id="sc-count">—</span></h2>
+        <p class="hint">这些是结构恒等式与物理不变量，不通过就说明某一步算错了。</p>
+        <div id="sc-body"></div>
+      </section>
+    </div>
+
+    <!-- ═══ 右列：照片墙 + 输入 ═══ -->
+    <div>
+      <section class="card" id="sec-wall">
+        <h2>照片墙摆得下几张 <span class="step">按真实比例画</span></h2>
+        <p class="hint" id="wall-hint">相框外廓按「相纸每边加框」算，格与格之间留缝。</p>
+        <div class="wallbox" id="wallbox"><div class="wallgrid" id="wallgrid"></div></div>
+        <div class="wallmeta" id="wallmeta"></div>
+        <h3 class="sec">相纸尺寸（这三种是本页默认值，可按你手上的相纸改）</h3>
+        <div class="papercmp" id="papercmp"></div>
+      </section>
+
+      <section class="card" id="sec-inputs">
+        <h2>把你的数字填进来</h2>
+        <p class="hint">留空的必填项会报错；「冲洗店每张价格」可以留空（那就不做对照）。</p>
+
+        <h3 class="sec">① 手上已经有的</h3>
+        <div class="grid2">
+          <div class="field"><label for="f-haveShots">抽屉里还没用的相纸 <span class="sub">张</span></label>
+            <input type="text" inputmode="numeric" id="f-haveShots" data-k="haveShots"></div>
+          <div class="field"><label for="f-label">这套数字叫什么 <span class="sub">只用于导出</span></label>
+            <input type="text" id="f-label" data-k="label"></div>
+        </div>
+
+        <h3 class="sec">② 相纸</h3>
+        <div class="field"><label>相纸画幅</label>
+          <div class="chips" id="chips-paperKind">
+            <button type="button" class="chip" data-k="paperKind" data-v="mini">小卡 54×86</button>
+            <button type="button" class="chip" data-k="paperKind" data-v="square">方形 72×86</button>
+            <button type="button" class="chip" data-k="paperKind" data-v="wide">宽幅 86×108</button>
+            <button type="button" class="chip" data-k="paperKind" data-v="custom">自定尺寸</button>
+          </div>
+        </div>
+        <div id="sec-custom" class="grid2 hidden">
+          <div class="field"><label for="f-paperW">相纸宽 <span class="sub">毫米</span></label>
+            <input type="text" inputmode="decimal" id="f-paperW" data-k="paperW"></div>
+          <div class="field"><label for="f-paperH">相纸高 <span class="sub">毫米</span></label>
+            <input type="text" inputmode="decimal" id="f-paperH" data-k="paperH"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f-packShots">每包几张 <span class="sub">张 / 包</span></label>
+            <input type="text" inputmode="numeric" id="f-packShots" data-k="packShots"></div>
+          <div class="field"><label for="f-packPrice">每包多少钱 <span class="sub">元 / 包</span></label>
+            <input type="text" inputmode="decimal" id="f-packPrice" data-k="packPrice"></div>
+        </div>
+
+        <h3 class="sec">③ 要拍多少</h3>
+        <div class="grid2">
+          <div class="field"><label for="f-wantShots">计划拍摄 <span class="sub">张（含要挂上墙的）</span></label>
+            <input type="text" inputmode="numeric" id="f-wantShots" data-k="wantShots"></div>
+          <div class="field"><label>要不要算照片墙</label>
+            <div class="chips" id="chips-wantWall">
+              <button type="button" class="chip" data-k="wantWall" data-v="true">要算</button>
+              <button type="button" class="chip" data-k="wantWall" data-v="false">不用算</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <div style="font-size:12.5px;color:var(--ink3);background:#f6f4ef;border:1px dashed var(--line2);border-radius:9px;padding:8px 10px">
+            相纸只能整包买，所以「买几包」不需要任何假设：按张数向上取整就是最少包数，多出来的就是余料。
+            本页<b>不假设</b>相纸会过期、也不假设你什么时候拍——余料会不会真的浪费掉，按你手上相纸的有效期自己判断。
+          </div>
+        </div>
+
+        <div id="sec-wallin">
+          <h3 class="sec">④ 照片墙的尺寸</h3>
+          <div class="grid2">
+            <div class="field"><label for="f-wallW">墙面可用宽 <span class="sub">毫米</span></label>
+              <input type="text" inputmode="decimal" id="f-wallW" data-k="wallW"></div>
+            <div class="field"><label for="f-wallH">墙面可用高 <span class="sub">毫米</span></label>
+              <input type="text" inputmode="decimal" id="f-wallH" data-k="wallH"></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label for="f-frameGap">相框每边加宽 <span class="sub">毫米</span></label>
+              <input type="text" inputmode="decimal" id="f-frameGap" data-k="frameGap"></div>
+            <div class="field"><label for="f-gapMM">相框之间留缝 <span class="sub">毫米</span></label>
+              <input type="text" inputmode="decimal" id="f-gapMM" data-k="gapMM"></div>
+          </div>
+        </div>
+
+        <h3 class="sec">⑤ 收纳</h3>
+        <div class="field"><label>怎么收纳</label>
+          <div class="chips" id="chips-albumKind">
+            <button type="button" class="chip" data-k="albumKind" data-v="sheet">买内页 + 相册芯</button>
+            <button type="button" class="chip" data-k="albumKind" data-v="book">买成品相册</button>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="f-albumSheetPocket">每张内页能插几张 <span class="sub">个口袋</span></label>
+            <input type="text" inputmode="numeric" id="f-albumSheetPocket" data-k="albumSheetPocket"></div>
+          <div class="field" id="sec-packSheets"><label for="f-albumPackSheets">一小包内页几张 <span class="sub">张 / 小包</span></label>
+            <input type="text" inputmode="numeric" id="f-albumPackSheets" data-k="albumPackSheets"></div>
+        </div>
+        <div class="field hidden" id="sec-bookSheets"><label for="f-albumBookSheets">一成品相册几页 <span class="sub">张内页 / 本</span></label>
+          <input type="text" inputmode="numeric" id="f-albumBookSheets" data-k="albumBookSheets"></div>
+
+        <h3 class="sec">⑥ 两个可留空的</h3>
+        <div class="grid2">
+          <div class="field"><label for="f-printShopPrice">冲洗店每张价格 <span class="sub">元 / 张（留空就不对照）</span></label>
+            <input type="text" inputmode="decimal" id="f-printShopPrice" data-k="printShopPrice"></div>
+          <div class="field"><label for="f-reservePacks">额外备用包数 <span class="sub">包（0 = 不留备用）</span></label>
+            <input type="text" inputmode="numeric" id="f-reservePacks" data-k="reservePacks"></div>
+        </div>
+
+        <div class="btnrow">
+          <button type="button" class="btn primary" id="btn-calc">重算</button>
+          <button type="button" class="btn" id="btn-save">保存到本机</button>
+          <button type="button" class="btn" id="btn-reset">恢复默认</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>内置场景 <span class="step">一键套用</span></h2>
+        <p class="hint">全部是虚构示例，只用来演示不同情形下结论怎么变。</p>
+        <div class="chips" id="scenarios"></div>
+      </section>
+
+      <section class="card" id="sec-sens">
+        <h2>改一个条件会怎样</h2>
+        <p class="hint">每行都是把同一个引擎拿新数字完整重算一遍，不复用上面任何聚合量。</p>
+        <table class="sens" id="sens">
+          <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"><col class="c6"></colgroup>
+          <thead><tr><th>改动</th><th>包数</th><th>够拍出来</th><th>总花费</th><th>每张实际成本</th><th>判定</th></tr></thead>
+          <tbody id="sens-body"></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>导出与备份</h2>
+        <div class="btnrow">
+          <button type="button" class="btn" id="btn-csv">清点单 CSV</button>
+          <button type="button" class="btn" id="btn-md">说明 Markdown</button>
+          <button type="button" class="btn" id="btn-json">JSON 备份</button>
+          <button type="button" class="btn" id="btn-png">结果卡 PNG</button>
+          <button type="button" class="btn" id="btn-import">导入备份</button>
+          <input type="file" id="file-import" accept="application/json,.json" class="hidden">
+        </div>
+        <p class="hint" style="margin-top:9px">结果卡是 1080×1350；PNG 用 canvas 现画，不依赖任何外部资源。</p>
+      </section>
+
+      <section class="card">
+        <h2>这个页面不做什么</h2>
+        <ul class="notes" id="notes"></ul>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="footbar"><div class="in">
+  <span>要买 <b id="d-packs">—</b></span>
+  <span>够拍出来 <b id="d-usable">—</b></span>
+  <span>多买余料 <b id="d-left">—</b></span>
+  <span>一共 <b id="d-spend">—</b></span>
+  <span>每张 <b id="d-real">—</b></span>
+  <span id="d-verdict" style="color:var(--ink3)"></span>
+</div></div>
+
+<script>/* 这张相纸够不够 · 拍立得相纸账（core.js）
+ * 纯函数引擎：不联网、不读外网、不内置任何品牌规格表。
+ * 所有尺寸与张数的默认值都是本页的设计默认值，可在界面上改；页面不声称它们是某品牌参数。
+ * 运行环境：浏览器 <script>（window.AppCore）与 node（module.exports）通用。
+ */
+'use strict';
+
+/* ─── 相纸格式默认值（毫米） ─────────────────────────────────────────────
+ * 这三个是「小卡 / 方形 / 宽幅」三种常见画幅尺寸的本页默认值，用户可按手上相纸实测改写。
+ * 本页不引用任何品牌名，也不声称这些数字来自某品牌官方参数。
+ */
+var PAPER_FORMATS = {
+  mini: { key: 'mini', label: '小卡 54×86', w: 54, h: 86 },
+  square: { key: 'square', label: '方形 72×86', w: 72, h: 86 },
+  wide: { key: 'wide', label: '宽幅 86×108', w: 86, h: 108 },
+  custom: { key: 'custom', label: '自定尺寸', w: 54, h: 86 }
+};
+
+var DEFAULTS = {
+  label: '虚构示例：一次同学会',
+  // ① 手上已经有的
+  haveShots: 0,
+  // ② 相纸
+  paperKind: 'mini',
+  paperW: 54,
+  paperH: 86,
+  packShots: 8,
+  packPrice: 68,
+  // ③ 要拍多少张
+  wantShots: 137,
+  wantWall: true,
+  // ⑤ 照片墙（毫米）
+  wallW: 2400,
+  wallH: 1500,
+  frameGap: 2,
+  gapMM: 20,
+  // ⑥ 收纳
+  albumKind: 'sheet',
+  albumSheetPocket: 3,
+  albumPackSheets: 10,
+  albumBookSheets: 30,
+  // ⑦ 只做「冲洗店 vs 自己买相纸」的每张成本对照，可不填
+  printShopPrice: 12,
+  // 高级
+  reservePacks: 0
+};
+
+var FIELDS = [
+  { id: 'label', type: 'text' },
+  { id: 'haveShots', type: 'num', min: 0, max: 20000, step: 1, int: true },
+  { id: 'paperKind', type: 'enum', values: ['mini', 'square', 'wide', 'custom'] },
+  { id: 'paperW', type: 'num', min: 5, max: 600, step: 1 },
+  { id: 'paperH', type: 'num', min: 5, max: 600, step: 1 },
+  { id: 'packShots', type: 'num', min: 1, max: 100, step: 1, int: true },
+  { id: 'packPrice', type: 'num', min: 0, max: 10000, step: 1 },
+  { id: 'wantShots', type: 'num', min: 0, max: 20000, step: 1, int: true },
+  { id: 'wantWall', type: 'bool' },
+  { id: 'wallW', type: 'num', min: 100, max: 20000, step: 10 },
+  { id: 'wallH', type: 'num', min: 100, max: 20000, step: 10 },
+  { id: 'frameGap', type: 'num', min: 0, max: 20, step: 0.5 },
+  { id: 'gapMM', type: 'num', min: 0, max: 500, step: 1 },
+  { id: 'albumKind', type: 'enum', values: ['sheet', 'book'] },
+  { id: 'albumSheetPocket', type: 'num', min: 1, max: 20, step: 1, int: true },
+  { id: 'albumPackSheets', type: 'num', min: 1, max: 200, step: 1, int: true },
+  { id: 'albumBookSheets', type: 'num', min: 1, max: 500, step: 1, int: true },
+  { id: 'printShopPrice', type: 'num', min: 0, max: 10000, step: 1 },
+  { id: 'reservePacks', type: 'num', min: 0, max: 50, step: 1, int: true }
+];
+
+var SCENARIOS = [
+  { id: 'default', name: '同学会 137 张（默认）', note: '小卡相纸、8 张/包、68 元/包，顺带铺一面照片墙', patch: {} },
+  { id: 'trip', name: '旅行 10 天', note: '方形相纸，每天大概拍 6 张', patch: {
+    label: '旅行（虚构示例）', paperKind: 'square', paperW: 72, paperH: 86,
+    wantShots: 60, packPrice: 78, wantWall: false, printShopPrice: 15, reservePacks: 1 } },
+  { id: 'wedding', name: '婚礼当天 300 张', note: '宽幅相纸，拍得多、单价高', patch: {
+    label: '婚礼（虚构示例）', paperKind: 'wide', paperW: 86, paperH: 108,
+    wantShots: 300, packPrice: 92, wantWall: true, wallW: 3000, wallH: 1800, printShopPrice: 12 } },
+  { id: 'nopaper', name: '一张都不买（看空账）', note: '已有相纸够用时的下界', patch: {
+    label: '零购买（虚构示例）', haveShots: 0, wantShots: 0, wantWall: false } },
+  { id: 'leftover', name: '抽屉里还剩 20 张', note: '先把存货扣掉再买', patch: {
+    label: '有存货（虚构示例）', haveShots: 20, wantShots: 100 } },
+  { id: 'notwall', name: '只拍照、不上墙', note: '关掉照片墙，只看相纸账', patch: {
+    label: '不上墙（虚构示例）', wantWall: false, wantShots: 96 } },
+  { id: 'twopack', name: '一包只有 2 张的迷你包', note: '看包内张数很小时取整的代价', patch: {
+    label: '迷你包（虚构示例）', packShots: 2, packPrice: 20, wantShots: 30 } },
+  { id: 'bigwall', name: '整面墙都铺满', note: '墙很大、相框很小，需要很多张', patch: {
+    label: '大墙面（虚构示例）', wantWall: true, wallW: 4200, wallH: 2600, gapMM: 30, wantShots: 400 } }
+];
+
+/* ─── 基础工具 ─────────────────────────────────────────────────────── */
+function isNum(v) { return typeof v === 'number' && isFinite(v); }
+function num(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : NaN;
+  if (typeof v === 'string') {
+    var s = v.trim().replace(/[，,\s]/g, '');
+    if (s === '') return NaN;
+    if (!/^[+-]?(\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+    return parseFloat(s);
+  }
+  return NaN;
+}
+function ceilDiv(a, b) { return Math.ceil(a / b - 1e-12); }
+function ceilSafe(x) { return Math.ceil(x - 1e-9); }
+function r6(x) { return Math.round(x * 1e6) / 1e6; }
+function r4(x) { return Math.round(x * 1e4) / 1e4; }
+function clamp(x, lo, hi) { return x < lo ? lo : (x > hi ? hi : x); }
+
+function fmtMoney(x) {
+  if (!isNum(x)) return '—';
+  var neg = x < 0; var v = Math.abs(x);
+  var s = (Math.round(v * 100) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (neg ? '-' : '') + s;
+}
+function fmtNum(x, d) {
+  if (!isNum(x)) return '—';
+  var n = d === undefined ? 2 : d;
+  var s = x.toFixed(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return s;
+}
+function fmtPct(x, d) { return isNum(x) ? fmtNum(x, d === undefined ? 2 : d) + '%' : '—'; }
+/* 整数、带千分位（用于毫米这类四位数读数：2400 → 2,400） */
+function fmtInt(x) { return isNum(x) ? fmtNum(x, 0) : '—'; }
+
+/* ─── 归一化：界面能产生的取值必须齐全，并有兜底 ───────────────────── */
+function normCfg(raw) {
+  var c = {};
+  for (var k in DEFAULTS) if (Object.prototype.hasOwnProperty.call(DEFAULTS, k)) c[k] = DEFAULTS[k];
+  if (raw && typeof raw === 'object') {
+    for (var k2 in raw) if (Object.prototype.hasOwnProperty.call(raw, k2)) c[k2] = raw[k2];
+  }
+  // 枚举兜底
+  if (!PAPER_FORMATS[c.paperKind]) c.paperKind = 'mini';
+  if (c.albumKind !== 'sheet' && c.albumKind !== 'book') c.albumKind = 'sheet';
+  // 布尔兜底（界面可能给字符串）
+  c.wantWall = (c.wantWall === true || c.wantWall === 'true' || c.wantWall === 1 || c.wantWall === '1');
+  // 数值字段一律归一成 number：界面上的 <input>.value 永远是字符串，
+  // 只要有一个字段漏了转换，`'2400' + 20` 就会变成字符串拼接，几何整段算错
+  // （本轮真的踩到：墙面宽从输入框读到 '2400'，照片墙列数算成 0）。
+  for (var fi = 0; fi < FIELDS.length; fi++) {
+    var f = FIELDS[fi];
+    if (f.type !== 'num') continue;
+    // 「冲洗店每张价格」允许留空（留空 = 不做对照），空串要原样交给 validate 处理
+    if (f.id === 'printShopPrice' && (c[f.id] === '' || c[f.id] === null)) continue;
+    c[f.id] = num(c[f.id]);
+  }
+  // 选了预设格式时用预设尺寸覆盖（custom 才用用户填的）
+  if (c.paperKind !== 'custom' && PAPER_FORMATS[c.paperKind]) {
+    c.paperW = PAPER_FORMATS[c.paperKind].w;
+    c.paperH = PAPER_FORMATS[c.paperKind].h;
+  }
+  return c;
+}
+
+/* ─── 校验 ─────────────────────────────────────────────────────────── */
+function validate(rawCfg) {
+  var cfg = normCfg(rawCfg);
+  var errors = []; var fieldErr = {};
+  function bad(f, msg) { errors.push({ field: f, msg: msg }); fieldErr[f] = true; }
+  function need(f, label) {
+    var v = num(cfg[f]);
+    if (!isNum(v)) { bad(f, label + '请填一个数字'); return NaN; }
+    return v;
+  }
+  function range(f, label, v, lo, hi, intOnly) {
+    if (!isNum(v)) return;
+    if (v < lo || v > hi) { bad(f, label + '应在 ' + lo + ' ~ ' + hi + ' 之间'); return; }
+    if (intOnly && Math.abs(v - Math.round(v)) > 1e-9) bad(f, label + '要填整数');
+  }
+
+  var v;
+  v = need('haveShots', '已有张数'); range('haveShots', '已有张数', v, 0, 20000, true);
+  v = need('paperW', '相纸宽'); range('paperW', '相纸宽', v, 5, 600, false);
+  v = need('paperH', '相纸高'); range('paperH', '相纸高', v, 5, 600, false);
+  v = need('packShots', '每包张数'); range('packShots', '每包张数', v, 1, 100, true);
+  v = need('packPrice', '每包价格'); range('packPrice', '每包价格', v, 0, 10000, false);
+  v = need('wantShots', '计划拍摄张数'); range('wantShots', '计划拍摄张数', v, 0, 20000, true);
+  v = need('wallW', '墙面可用宽'); range('wallW', '墙面可用宽', v, 100, 20000, false);
+  v = need('wallH', '墙面可用高'); range('wallH', '墙面可用高', v, 100, 20000, false);
+  v = need('frameGap', '相框单边加宽'); range('frameGap', '相框单边加宽', v, 0, 20, false);
+  v = need('gapMM', '相框之间留缝'); range('gapMM', '相框之间留缝', v, 0, 500, false);
+  v = need('albumSheetPocket', '每张相册内页能插几张'); range('albumSheetPocket', '每张相册内页能插几张', v, 1, 20, true);
+  v = need('albumPackSheets', '一小包内页张数'); range('albumPackSheets', '一小包内页张数', v, 1, 200, true);
+  v = need('albumBookSheets', '成品相册内页张数'); range('albumBookSheets', '成品相册内页张数', v, 1, 500, true);
+  v = need('reservePacks', '额外备用包数'); range('reservePacks', '额外备用包数', v, 0, 50, true);
+
+  // 可留空的冲洗店单价
+  var psRaw = cfg.printShopPrice;
+  if (psRaw === '' || psRaw === null || psRaw === undefined) { cfg.printShopPrice = null; }
+  else {
+    var ps = num(psRaw);
+    if (!isNum(ps)) bad('printShopPrice', '冲洗店每张价格请填数字或留空');
+    else if (ps < 0 || ps > 10000) bad('printShopPrice', '冲洗店每张价格应在 0 ~ 10000 之间');
+    else cfg.printShopPrice = ps;
+  }
+
+  // 交叉校验
+  if (isNum(num(cfg.paperW)) && isNum(num(cfg.paperH)) && num(cfg.paperW) * num(cfg.paperH) <= 0) {
+    bad('paperW', '相纸宽高都要大于 0');
+  }
+  if (cfg.wantWall === true) {
+    var nW = num(cfg.wallW), nH = num(cfg.wallH);
+    var pw = num(cfg.paperW), ph = num(cfg.paperH), fgv = num(cfg.frameGap);
+    if (isNum(nW) && isNum(nH) && isNum(pw) && isNum(ph) && isNum(fgv)) {
+      // 竖挂：相框（含框）的宽 = 相纸短边 + 2×框、高 = 相纸长边 + 2×框。
+      // 两个方向要分别比：只拿短边去比高度，会让「宽 90、高 112 的相框」在 100×100 的墙上被放过
+      // （本轮实测：宽幅相纸 + 100×100 的墙没有报错，因为 90 ≤ 100 就被判成放得下了）。
+      var dispW = Math.min(pw, ph) + 2 * fgv;
+      var dispH = Math.max(pw, ph) + 2 * fgv;
+      if (dispW > nW + 1e-9 || dispH > nH + 1e-9) {
+        bad('wallW', '相框（含框 ' + fmtNum(dispW, 1) + ' × ' + fmtNum(dispH, 1) +
+          ' mm）比墙面（' + fmtNum(nW, 0) + ' × ' + fmtNum(nH, 0) +
+          ' mm）还大，这面墙放不下任何一张；请放大墙面或换小相纸');
+      }
+    }
+  }
+  if (isNum(num(cfg.packShots)) && num(cfg.packShots) < 1) bad('packShots', '每包至少 1 张');
+
+  return { ok: errors.length === 0, errors: errors, fieldErr: fieldErr, cfg: cfg };
+}
+
+/* ─── 购买与余料模型 ─────────────────────────────────────────────────
+ * 相纸只能整包买，所以「买几包」这件事是完全确定的，不需要任何假设：
+ *   need       = max(0, 计划拍摄张数 − 已有张数)          ← 还差几张
+ *   基准包数   = ceil(need ÷ 每包张数)                     ← 唯一能拍够原计划的最小包数
+ *   买来的张数 = (基准包数 + 备用包数) × 每包张数
+ *   余料       = max(0, 买来的张数 − 计划拍摄张数 − 已有张数)
+ *   实际成片   = min(计划拍摄张数, 已有张数 + 买来的张数)
+ * 为什么不做「相纸会过期、剩余张数会坏掉」的折损模型：那样就得假设使用者什么时候拍、
+ * 每包拆封后放多久，那个假设一旦取错，会得出「买得越多可用越少」这种反物理的结论。
+ * 本页只报**能直接核对**的量：余料几张、余料花了多少钱、每张实际成本是多少。
+ * 相纸是否会在你拍完之前过期，取决于你放多久，请按你实际相纸上的有效期自行判断。
+ */
+function usableShots(cfg, k) {
+  var N = cfg.packShots;
+  var stock = Math.max(0, cfg.haveShots);
+  var want = Math.max(0, cfg.wantShots);
+  var boughtShots = Math.max(0, Math.floor(k)) * N;
+  var supply = stock + boughtShots;
+  return want <= 0 ? supply : Math.min(want, supply);
+}
+
+/* 某一套购买方案（基准 + 备用）的完整读数 */
+function planFor(cfg, basisPacks, extraPacks) {
+  var N = cfg.packShots;
+  var b = Math.max(0, basisPacks), e = Math.max(0, extraPacks);
+  var boughtPacks = b + e;
+  var boughtShots = boughtPacks * N;
+  var stock = Math.max(0, cfg.haveShots);
+  var want = Math.max(0, cfg.wantShots);
+  var need = Math.max(0, want - stock);
+  var usable = usableShots(cfg, boughtPacks);
+  var leftovers = Math.max(0, boughtShots - need);
+  var actualShots = Math.min(want, usable);
+  var spend = boughtPacks * cfg.packPrice;
+  return {
+    basisPacks: b,
+    extraPacks: e,
+    packs: boughtPacks,
+    basisShots: b * N,
+    boughtShots: boughtShots,
+    leftovers: leftovers,
+    leftoverPerPack: boughtPacks > 0 ? leftovers / (boughtPacks * N) : null,
+    usable: usable,
+    actualShots: actualShots,
+    deficit: Math.max(0, need - boughtShots),
+    feasible: boughtShots >= need - 1e-9,
+    spend: spend,
+    realPerShot: actualShots > 1e-9 ? spend / actualShots : null,
+    leftoverCost: leftovers * (N > 0 ? cfg.packPrice / N : 0),
+    surplusPct: boughtShots > 0 ? leftovers / boughtShots * 100 : null
+  };
+}
+
+/* ─── 主计算 ───────────────────────────────────────────────────────── */
+function compute(rawCfg) {
+  var v = validate(rawCfg);
+  var cfg = v.cfg;
+  var out = {
+    ok: v.ok, errors: v.errors, fieldErr: v.fieldErr, cfg: cfg,
+    kpis: [], lines: [], notes: [], selfChecks: [], evidence: []
+  };
+  if (!v.ok) return out;
+
+  var N = cfg.packShots;
+  var need = Math.max(0, cfg.wantShots - cfg.haveShots);   // 还差几张
+  // 最少包数：把「还差的张数」按每包张数向上取整；还差 0 张就是 0 包。
+  // （库存已经够、或计划为 0 张时都不该硬买一包）
+  // 为什么这就是最小解：整包买，ceil(need / 每包张数) 包必然提供 ≥ need 张，
+  // 少一包就必然 < need 张 —— 无需搜索。
+  var minPacksByNeed = need > 0 ? Math.ceil(need / N - 1e-12) : 0;
+  var baseLeftover = Math.max(0, minPacksByNeed * N - need);
+
+  // 备用包：每加一包都是一整包，只影响总花费与余料，不影响「够不够拍」
+  var chosenExtra = cfg.reservePacks;
+  var chosen = planFor(cfg, minPacksByNeed, chosenExtra);
+  var base = planFor(cfg, minPacksByNeed, 0);
+  base.minPacksByNeed = minPacksByNeed;
+  base.minPacks = minPacksByNeed;
+  base.baseLeftover = baseLeftover;
+
+  // 备用包的取舍：在「够用」的前提下找每张实际成本最低的备用包数（0..8）
+  var candidates = [];
+  for (var e = 0; e <= 8; e++) {
+    var pp = planFor(cfg, minPacksByNeed, e);
+    candidates.push({
+      extraPacks: e, packs: pp.packs, usable: pp.usable, spend: pp.spend, leftovers: pp.leftovers,
+      realPerShot: pp.realPerShot, feasible: pp.boughtShots >= need - 1e-9
+    });
+  }
+  var feasible = candidates.filter(function (c) { return c.feasible; });
+  var best = feasible.reduce(function (a, b) {
+    if (!a) return b;
+    if (b.realPerShot === null) return a;
+    if (a.realPerShot === null) return b;
+    return b.realPerShot < a.realPerShot - 1e-12 ? b : a;
+  }, null);
+
+  // 照片墙
+  var wall = null;
+  if (cfg.wantWall) {
+    var w = cfg.wallW, h = cfg.wallH, fg = cfg.frameGap, gp = cfg.gapMM;
+    var frame = [cfg.paperW + 2 * fg, cfg.paperH + 2 * fg];
+    var disp = [Math.min(frame[0], frame[1]), Math.max(frame[0], frame[1])];  // 竖着挂
+    var pitch = [disp[0] + gp, disp[1] + gp];
+    var cols = Math.max(0, Math.floor((w + gp + 1e-9) / pitch[0]));
+    var rows = Math.max(0, Math.floor((h + gp + 1e-9) / pitch[1]));
+    var byWidth = Math.max(0, Math.floor((w + 1e-9) / pitch[0]));
+    var byHeight = Math.max(0, Math.floor((h + 1e-9) / pitch[1]));
+    var used = [(cols > 0 ? cols * disp[0] + (cols - 1) * gp : 0), (rows > 0 ? rows * disp[1] + (rows - 1) * gp : 0)];
+    wall = {
+      paperW: cfg.paperW, paperH: cfg.paperH,
+      frameW: frame[0], frameH: frame[1],
+      dispW: disp[0], dispH: disp[1],
+      pitchW: pitch[0], pitchH: pitch[1],
+      cols: cols, rows: rows, count: cols * rows,
+      byWidth: byWidth, byHeight: byHeight,
+      usedW: used[0], usedH: used[1],
+      freeW: w - used[0], freeH: h - used[1],
+      fillPct: (w * h) > 0 ? (used[0] * used[1]) / (w * h) * 100 : 0,
+      needShots: cols * rows,
+      fits: cols >= 1 && rows >= 1
+    };
+    // 反过来问：墙上这一片要几张、够不够
+    wall.shortBy = Math.max(0, wall.needShots - Math.max(0, cfg.haveShots));
+    wall.packsForWall = wall.shortBy > 0 ? ceilDiv(wall.shortBy, N) : 0;
+  }
+
+  // 相册
+  var album = null;
+  if (cfg.albumKind === 'sheet') {
+    var cap = cfg.albumSheetPocket;
+    var sheets = cfg.wantShots > 0 ? ceilDiv(cfg.wantShots, cap) : 0;
+    var packs = sheets > 0 ? ceilDiv(sheets, cfg.albumPackSheets) : 0;
+    album = {
+      kind: 'sheet', label: '内页 + 相册芯',
+      perSheet: cap, sheets: sheets, packSheets: cfg.albumPackSheets, packs: packs,
+      extraSheets: packs * cfg.albumPackSheets - sheets,
+      cells: sheets * cap, extraCells: sheets * cap - cfg.wantShots,
+      books: null, sheetPerBook: null
+    };
+  } else {
+    var cap2 = cfg.albumSheetPocket;
+    var perBook = cfg.albumBookSheets * cap2;
+    var books = cfg.wantShots > 0 ? ceilDiv(cfg.wantShots, perBook) : 0;
+    album = {
+      kind: 'book', label: '成品相册',
+      perSheet: cap2, sheetPerBook: cfg.albumBookSheets, perBook: perBook,
+      books: books, cells: books * perBook, extraCells: books * perBook - cfg.wantShots,
+      sheets: books * cfg.albumBookSheets
+    };
+  }
+
+  // 冲洗店对照（口径：同样这一批要成片，冲洗店按成片张数收费）
+  var shop = null;
+  if (isNum(cfg.printShopPrice)) {
+    var actual = chosen.actualShots;
+    shop = {
+      price: cfg.printShopPrice,
+      shots: actual,
+      total: cfg.printShopPrice * actual,
+      filmTotal: chosen.spend,
+      diff: chosen.spend - cfg.printShopPrice * actual,
+      cheaper: chosen.spend < cfg.printShopPrice * actual ? 'film' :
+        (chosen.spend > cfg.printShopPrice * actual ? 'shop' : 'tie')
+    };
+    shop.diffPerShot = actual > 0 ? shop.diff / actual : null;
+  }
+
+  // 判定
+  var nominal = N > 0 ? cfg.packPrice / N : null;
+  var gap = cfg.wantShots - chosen.usable;         // ≤ 0 表示够
+  var verdict;
+  if (need <= 0 || chosen.packs === 0) {
+    verdict = { level: 'ok', title: '不用买：手上的已经够', why: '还要拍 ' + fmtNum(cfg.wantShots, 0) + ' 张，手上已有 ' + fmtNum(cfg.haveShots, 0) + ' 张。' };
+  } else if (!chosen.feasible) {
+    var short = cfg.wantShots - chosen.usable;
+    var badLevel = short <= Math.max(2, cfg.wantShots * 0.04) ? 'tight' : 'bad';
+    verdict = {
+      level: badLevel,
+      title: badLevel === 'tight' ? '正好差一点：再加一包' : '不够',
+      why: '就算把拆封那包剩下的按存活比例算进去，也还差 ' + fmtNum(short, 2) + ' 张；' +
+        '再加一包就有 ' + fmtNum(planFor(cfg, chosen.packs + 1, 0).usable, 1) + ' 张可用。'
+    };
+  } else {
+    var waste = chosen.boughtShots > 0 ? (chosen.boughtShots - chosen.usable) / chosen.boughtShots * 100 : 0;
+    var lvl, title;
+    if (chosen.leftovers <= 0) { lvl = 'ok'; title = '刚好够，一张不多一张不少'; }
+    else if (chosen.leftovers <= cfg.packShots / 2) { lvl = 'warn'; title = '够用，只多出 ' + fmtNum(chosen.leftovers, 0) + ' 张'; }
+    else { lvl = 'warn'; title = '够用，但会多出 ' + fmtNum(chosen.leftovers, 0) + ' 张'; }
+    verdict = {
+      level: lvl,
+      title: title,
+      why: '计划拍 ' + fmtNum(cfg.wantShots, 0) + ' 张、手上已有 ' + fmtNum(cfg.haveShots, 0) + ' 张，按张数要 ' + minPacksByNeed +
+        ' 包；相纸只能整包买，所以买 ' + chosen.packs + ' 包（' + fmtNum(chosen.boughtShots, 0) + ' 张）、多出 ' +
+        fmtNum(chosen.leftovers, 0) + ' 张余料（值 ¥' + fmtMoney(chosen.leftoverCost) + '）。' +
+        (chosen.extraPacks > 0 ? '其中 ' + chosen.extraPacks + ' 包是你自己要留的备用。' : '') +
+        '每张实际成本 ¥' + (chosen.realPerShot === null ? '—' : fmtMoney(chosen.realPerShot)) +
+        '，比名义单价 ¥' + (nominal === null ? '—' : fmtMoney(nominal)) + ' 贵 ¥' +
+        (nominal === null || chosen.realPerShot === null ? '—' : fmtMoney(chosen.realPerShot - nominal)) + '。'
+    };
+  }
+
+  // 读数
+  out.kpis = [
+    { id: 'packs', label: '建议买几包', value: fmtNum(chosen.packs, 0) + ' 包',
+      sub: fmtNum(chosen.boughtShots, 0) + ' 张相纸（每包 ' + N + ' 张）；按张数最少要 ' + minPacksByNeed + ' 包' },
+    { id: 'usable', label: '够拍出来', value: fmtNum(chosen.usable, 0) + ' 张',
+      sub: '要拍 ' + fmtNum(cfg.wantShots, 0) + ' 张，' + (gap <= -1e-9 ? ('多出 ' + fmtNum(-gap, 1) + ' 张余量') : (gap >= 1e-9 ? ('还差 ' + fmtNum(gap, 1) + ' 张') : '刚好够')) },
+    { id: 'spend', label: '相纸一共花', value: '¥' + fmtMoney(chosen.spend),
+      sub: '每包 ¥' + fmtMoney(cfg.packPrice) + '（不含相册、相框与冲洗）' },
+    { id: 'real', label: '每张实际成本', value: chosen.realPerShot === null ? '—' : '¥' + fmtMoney(chosen.realPerShot),
+      sub: '名义价 ¥' + (nominal === null ? '—' : fmtMoney(nominal)) + ' / 张；按实际成片 ' + fmtNum(chosen.actualShots, 0) + ' 张摊' },
+    { id: 'waste', label: '多买出来的余料', value: fmtNum(chosen.leftovers, 0) + ' 张',
+      sub: '值 ¥' + fmtMoney(chosen.leftoverCost) + '（占总张数 ' + (chosen.surplusPct === null ? '—' : fmtPct(chosen.surplusPct, 2)) + '）' },
+    { id: 'wall', label: '这面墙能挂', value: wall ? fmtNum(wall.count, 0) + ' 张' : '—（没开照片墙）',
+      sub: wall ? wall.cols + ' 列 × ' + wall.rows + ' 行，横向用 ' + fmtInt(wall.usedW) + ' / ' + fmtInt(cfg.wallW) + ' mm' : '—' },
+    { id: 'album', label: album ? album.label : '—', value: album === null ? '—' :
+      (album.kind === 'sheet' ? fmtNum(album.packs, 0) + ' 小包内页' : fmtNum(album.books, 0) + ' 本'),
+      sub: album === null ? '—' : (album.kind === 'sheet'
+        ? '共 ' + fmtNum(album.sheets, 0) + ' 张内页、' + fmtNum(album.cells, 0) + ' 个口袋'
+        : '共 ' + fmtNum(album.cells, 0) + ' 个口袋') },
+    { id: 'shop', label: '冲洗店对照', value: shop === null ? '—（没填单价）' :
+      (shop.cheaper === 'film' ? '自己买相纸更省' : (shop.cheaper === 'shop' ? '送冲洗店更省' : '两边一样')),
+      sub: shop === null ? '填入冲洗店每张价格即可对照' : '同样 ' + fmtNum(shop.shots, 0) + ' 张：冲洗店 ' + fmtMoney(shop.total) + ' 元 vs 自己买 ' + fmtMoney(shop.filmTotal) + ' 元' }
+  ];
+
+  // 账单逐行（本页是「票据/清点单」形态：每一行都能自己复算）
+  var lines = [];
+  lines.push({ sec: '相纸', k: '要拍多少张', v: fmtNum(cfg.wantShots, 0) + ' 张', note: '你填的计划' });
+  lines.push({ sec: '相纸', k: '扣掉抽屉里已有的', v: '− ' + fmtNum(cfg.haveShots, 0) + ' 张', note: '已有的先算进来' });
+  lines.push({ sec: '相纸', k: '还差多少张', v: fmtNum(need, 0) + ' 张', note: '至少要买够这个数' });
+  lines.push({ sec: '相纸', k: '每包几张 × 每包价格', v: N + ' 张 / ¥' + fmtMoney(cfg.packPrice),
+    note: '名义每张 ¥' + (nominal === null ? '—' : fmtMoney(nominal)) });
+  lines.push({ sec: '相纸', k: '最少要买几包', v: fmtNum(minPacksByNeed, 0) + ' 包',
+    note: 'ceil(' + fmtNum(need, 0) + ' 张 ÷ ' + N + ' 张/包)；这一档的余料是 ' + fmtNum(baseLeftover, 0) + ' 张' });
+  lines.push({ sec: '相纸', k: '你额外留的备用包', v: fmtNum(chosen.extraPacks, 0) + ' 包', note: cfg.reservePacks > 0 ? '备用整包留到最后、没拆封不折损' : '没留备用' });
+  lines.push({ sec: '相纸', k: '实际买', v: fmtNum(chosen.packs, 0) + ' 包 = ' + fmtNum(chosen.boughtShots, 0) + ' 张', note: '共 ¥' + fmtMoney(chosen.spend) });
+  lines.push({ sec: '相纸', k: '买整包多出来的余料', v: fmtNum(chosen.leftovers, 0) + ' 张', note: '买来的 ' + fmtNum(chosen.boughtShots, 0) + ' 张 − 要拍的 ' + fmtNum(cfg.wantShots, 0) + ' 张 − 存量 ' + fmtNum(cfg.haveShots, 0) + ' 张' });
+  lines.push({ sec: '相纸', k: '余料值多少钱', v: '¥' + fmtMoney(chosen.leftoverCost), note: '余料张数 ×（每包价 ÷ 每包张数）' });
+  lines.push({ sec: '相纸', k: '够拍出来', v: fmtNum(chosen.usable, 0) + ' 张', note: '要拍 ' + fmtNum(cfg.wantShots, 0) + ' 张，' + (chosen.usable >= cfg.wantShots ? '够' : '还差 ' + fmtNum(cfg.wantShots - chosen.usable, 0) + ' 张') });
+  lines.push({ sec: '相纸', k: '实际成片', v: fmtNum(chosen.actualShots, 0) + ' 张', note: '多的那部分（' + fmtNum(Math.max(0, chosen.usable - cfg.wantShots), 1) + ' 张）是余量' });
+  lines.push({ sec: '相纸', k: '每张实际成本', v: chosen.realPerShot === null ? '—' : '¥' + fmtMoney(chosen.realPerShot), note: '花了多少钱 ÷ 实际成片张数' });
+  if (wall) {
+    lines.push({ sec: '照片墙', k: '相框尺寸（含框）', v: fmtNum(wall.frameW, 1) + ' × ' + fmtNum(wall.frameH, 1) + ' mm', note: '相纸每边加 ' + fmtNum(cfg.frameGap, 1) + ' mm' });
+    lines.push({ sec: '照片墙', k: '中到中间距', v: fmtNum(wall.pitchW, 1) + ' × ' + fmtNum(wall.pitchH, 1) + ' mm', note: '含留缝 ' + fmtNum(cfg.gapMM, 1) + ' mm' });
+    lines.push({ sec: '照片墙', k: '墙面放得下', v: wall.cols + ' 列 × ' + wall.rows + ' 行 = ' + fmtInt(wall.count) + ' 张', note: '墙面 ' + fmtInt(cfg.wallW) + ' × ' + fmtInt(cfg.wallH) + ' mm' });
+    lines.push({ sec: '照片墙', k: '实际占墙', v: fmtInt(wall.usedW) + ' × ' + fmtInt(wall.usedH) + ' mm', note: '剩 ' + fmtInt(wall.freeW) + ' / ' + fmtInt(wall.freeH) + ' mm，占墙 ' + fmtPct(wall.fillPct, 1) });
+    lines.push({ sec: '照片墙', k: '铺满这面墙要', v: fmtNum(wall.needShots, 0) + ' 张', note: '还差 ' + fmtNum(wall.shortBy, 0) + ' 张 = ' + fmtNum(wall.packsForWall, 0) + ' 包' });
+  }
+  if (album) {
+    if (album.kind === 'sheet') {
+      lines.push({ sec: '收纳', k: '内页要塞下', v: fmtNum(cfg.wantShots, 0) + ' 张', note: '每张内页 ' + album.perSheet + ' 个口袋' });
+      lines.push({ sec: '收纳', k: '需要内页', v: fmtNum(album.sheets, 0) + ' 张', note: '共 ' + fmtNum(album.cells, 0) + ' 个口袋，比要装的 ' + fmtNum(cfg.wantShots, 0) + ' 张多 ' + fmtNum(album.extraCells, 0) + ' 个' });
+      lines.push({ sec: '收纳', k: '内页怎么买', v: fmtNum(album.packs, 0) + ' 小包 × ' + album.packSheets + ' 张', note: '拆成整小包买，会多 ' + fmtNum(album.extraSheets, 0) + ' 张内页' });
+    } else {
+      lines.push({ sec: '收纳', k: '一本能装', v: fmtNum(album.perBook, 0) + ' 张', note: album.sheetPerBook + ' 张内页 × ' + album.perSheet + ' 个口袋' });
+      lines.push({ sec: '收纳', k: '需要成品相册', v: fmtNum(album.books, 0) + ' 本', note: '共 ' + fmtNum(album.cells, 0) + ' 个口袋，多出 ' + fmtNum(album.extraCells, 0) + ' 个' });
+    }
+  }
+  if (shop) {
+    lines.push({ sec: '对照', k: '送冲洗店（同样 ' + fmtNum(shop.shots, 0) + ' 张成片）', v: '¥' + fmtMoney(shop.total), note: '¥' + fmtMoney(shop.price) + ' / 张 × ' + fmtNum(shop.shots, 0) + ' 张' });
+    lines.push({ sec: '对照', k: '自己买相纸', v: '¥' + fmtMoney(shop.filmTotal), note: '相差 ¥' + fmtMoney(Math.abs(shop.diff)) + (shop.diff > 0 ? '（冲洗店更省）' : (shop.diff < 0 ? '（自己买更省）' : '（两边一样）')) });
+  }
+  out.lines = lines;
+
+  // 反推
+  var reverse = [];
+  // R1 预算能买几包、能拍几张
+  if (cfg.packPrice > 0) {
+    var budget = chosen.spend;   // 用「这次要花的钱」当预算口径，保证可直接对照
+    var maxPacks = Math.floor((budget + 1e-9) / cfg.packPrice);
+    var rp = planFor(cfg, maxPacks, 0);
+    reverse.push({
+      id: 'R1', label: '就这点预算（¥' + fmtMoney(budget) + '）最多能拍',
+      value: fmtNum(Math.min(rp.actualShots > 0 ? rp.usable : 0, cfg.wantShots), 0) + ' 张成片',
+      note: maxPacks + ' 包 × ' + N + ' 张 = ' + fmtNum(maxPacks * N, 0) + ' 张相纸，扣掉拆封损耗后能用 ' + fmtNum(rp.usable, 1) + ' 张',
+      back: '回代：' + maxPacks + ' 包时首批能用 ' + fmtNum(rp.usable, 1) + ' 张（要拍 ' + fmtNum(cfg.wantShots, 0) + ' 张）'
+    });
+  } else {
+    reverse.push({ id: 'R1', label: '就这点预算最多能拍', value: '—', note: '每包价格填 0 时这条没有意义（相纸不要钱）', back: '' });
+  }
+  // R2 名义单价与每包价的关系
+  reverse.push({
+    id: 'R2', label: '想让名义每张成本不超过 ¥' + (nominal === null ? '—' : fmtMoney(nominal)),
+    value: cfg.packPrice > 0 ? '¥' + fmtMoney(cfg.packPrice) + ' / 包（就是现在这个价）' : '—',
+    note: '名义每张 = 每包价 ÷ 每包张数，与买几包无关；想压低它只能换更便宜的相纸或张数更多的包',
+    back: ''
+  });
+  // R3 相纸浪费临界：拆封剩多少张时浪费超过你设的线
+  reverse.push({
+    id: 'R3', label: '余料超过多少张才算「白买了半包」',
+    value: fmtNum(N / 2, 1) + ' 张（半包）',
+    note: '现在这套数字的余料是 ' + fmtNum(chosen.leftovers, 0) + ' 张，' +
+      (chosen.leftovers >= N / 2 ? '已经过半包了' : '还没过半包'),
+    back: ''
+  });
+  // R4 想铺满整面墙要再买几包
+  if (wall) {
+    reverse.push({
+      id: 'R4', label: '只想把照片墙铺满',
+      value: fmtNum(wall.needShots, 0) + ' 张 = ' + fmtNum(wall.packsForWall, 0) + ' 包',
+      note: '按墙面 ' + fmtInt(cfg.wallW) + ' × ' + fmtInt(cfg.wallH) + ' mm 与现在这个相框尺寸算',
+      back: '回代：' + wall.packsForWall + ' 包 × ' + N + ' 张 = ' + fmtNum(wall.packsForWall * N, 0) + ' 张 ≥ ' + fmtNum(wall.needShots, 0) + ' 张'
+    });
+  }
+  // R5 备用包最优
+  if (best && best.extraPacks !== cfg.reservePacks) {
+    reverse.push({
+      id: 'R5', label: '备用包留几包每张成本最低',
+      value: best.extraPacks + ' 包（每张 ¥' + fmtMoney(best.realPerShot) + '）',
+      note: '你现在留的是 ' + cfg.reservePacks + ' 包，每张 ' +
+        (chosen.realPerShot === null ? '—' : '¥' + fmtMoney(chosen.realPerShot)) + '；备用整包不折损，会在最后一批里补上缺口',
+      back: '最少要买 ' + minPacksByNeed + ' 包；备用 0~8 包里，够用的方案中每张成本最低的是 ' + best.extraPacks + ' 包'
+    });
+  } else {
+    reverse.push({
+      id: 'R5', label: '备用包留几包每张成本最低',
+      value: (best ? best.extraPacks : cfg.reservePacks) + ' 包（就是你现在的选择）',
+      note: '0~8 包里够用的方案中，每张实际成本最低的就是现在这个',
+      back: ''
+    });
+  }
+  out.reverse = reverse;
+
+  // 建议（能一键作用到输入）
+  var advice = [];
+  if (cfg.reservePacks > 0) {
+    advice.push({
+      id: 'A1', title: '备用包现在是 ' + cfg.reservePacks + ' 包，要不要留',
+      body: '备用包不影响「够不够拍」（按张数 ' + minPacksByNeed + ' 包就够了），只影响多花的钱与余料：现在多出 ' +
+        fmtNum(chosen.leftovers, 0) + ' 张余料、值 ¥' + fmtMoney(chosen.leftoverCost) +
+        '。改成 0 包可以省下 ¥' + fmtMoney(cfg.reservePacks * cfg.packPrice) + '，但就没有「拍坏了能补」的缓冲。',
+      patch: { reservePacks: 0 }
+    });
+  }
+  if (best && best.extraPacks !== cfg.reservePacks) {
+    advice.push({
+      id: 'A2', title: '把备用包改成 ' + best.extraPacks + ' 包',
+      body: '现在留 ' + cfg.reservePacks + ' 包，每张实际成本 ' + (chosen.realPerShot === null ? '—' : '¥' + fmtMoney(chosen.realPerShot)) +
+        '；改成 ' + best.extraPacks + ' 包后是 ¥' + fmtMoney(best.realPerShot) + '，仍能覆盖 ' + fmtNum(need, 0) + ' 张的缺口。',
+      patch: { reservePacks: best.extraPacks }
+    });
+  }
+  if (wall && !wall.fits) {
+    advice.push({
+      id: 'A3', title: '这个相框在这面墙上放不下',
+      body: '相框（含框）' + fmtNum(wall.frameW, 1) + ' × ' + fmtNum(wall.frameH, 1) + ' mm 比墙面 ' + fmtInt(cfg.wallW) + ' × ' + fmtInt(cfg.wallH) + ' mm 还大，先把相纸换小或把留缝调大。',
+      patch: { paperKind: 'mini', paperW: 54, paperH: 86 }
+    });
+  }
+  if (cfg.wantShots > 0 && wall && wall.fits && chosen.leftovers > cfg.packShots / 2) {
+    advice.push({
+      id: 'A4', title: '把多出来的那部分挂上墙',
+      body: '会多出 ' + fmtNum(chosen.leftovers, 0) + ' 张余料（值 ¥' + fmtMoney(chosen.leftoverCost) +
+        '），不如把它挂上墙：这面墙能挂 ' + wall.count + ' 张，还差 ' + fmtNum(wall.shortBy, 0) +
+        ' 张；把计划改成 ' + Math.min(20000, Math.max(cfg.wantShots, Math.min(wall.count, cfg.wantShots + Math.floor(chosen.leftovers)))) + ' 张，余料就能变成墙上的照片。',
+      patch: { wantShots: Math.min(20000, Math.max(cfg.wantShots, Math.min(wall.count, cfg.wantShots + Math.floor(chosen.leftovers)))) }
+    });
+  }
+  out.advice = advice;
+
+  out.notes = [
+    '相纸尺寸、每包张数、每包价格全部由你填，页面不联网、不查行情，也不内置任何品牌参数。',
+    '相纸只能整包买，所以「买几包」是完全确定的：按张数向上取整就是最少包数，多出来的张数就是余料。本页不假设相纸会过期、也不假设你什么时候拍。',
+    '余料会不会真的浪费掉，取决于你的相纸放到什么时候、以及你还拍不拍；请按你手上相纸的有效期自己判断，本页只报余料几张、值多少钱。',
+    '「一面墙摆几张」的排版规则（相框外廓加宽、相框之间留缝）是本页的设计选择，不是任何标准或行业规范。',
+    '照片墙只算几何排版（相框外廓 + 留缝），不含挂钩、龙骨、背板与承重。',
+    '相册只按口袋数取整，不含封面厚度、内页厚度与书脊容量。'
+  ];
+
+  out.evidence = [
+    { k: '还差张数', v: need },
+    { k: '按张数最少包数', v: minPacksByNeed },
+    { k: '实际包数', v: chosen.packs },
+    { k: '余料张数', v: r6(chosen.leftovers) },
+    { k: '余料金额', v: r6(chosen.leftoverCost) },
+    { k: '余料占总张数比例', v: chosen.surplusPct === null ? null : r6(chosen.surplusPct) },
+    { k: '够拍出来张数', v: r6(chosen.usable) },
+    { k: '实际成片张数', v: r6(chosen.actualShots) },
+    { k: '每张实际成本', v: chosen.realPerShot === null ? null : r6(chosen.realPerShot) },
+    { k: '名义每张价格', v: nominal === null ? null : r6(nominal) },
+    { k: '相纸总花费', v: r6(chosen.spend) },
+    { k: '零备用时能用张数', v: r6(base.usable) },
+    { k: '每张成本最低的备用包数', v: best ? best.extraPacks : null }
+  ];
+
+  out.selfChecks = selfChecks(out, cfg, need, minPacksByNeed, base, chosen, candidates, wall, album, shop, nominal);
+  out.wall = wall;
+  out.album = album;
+  out.shop = shop;
+  out.verdict = verdict;
+  out.plan = {
+    need: need, minPacksByNeed: minPacksByNeed, basisPacks: minPacksByNeed,
+    baseLeftover: baseLeftover, chosen: chosen, best: best,
+    candidates: candidates, nominal: nominal
+  };
+  return out;
+}
+
+/* ─── 结构自检 ─────────────────────────────────────────────────────── */
+function selfChecks(p, cfg, need, minPacksByNeed, base, chosen, candidates, wall, album, shop, nominal) {
+  var S = [];
+  function chk(name, ok, detail) { S.push({ name: name, ok: !!ok, detail: detail === undefined ? '' : detail }); }
+  var N = cfg.packShots;
+
+  chk('买来的 = 包数 × 每包张数', Math.abs(chosen.boughtShots - chosen.packs * N) < 1e-9,
+    chosen.packs + ' × ' + N + ' = ' + chosen.boughtShots);
+  chk('还差张数 = 计划 − 已有', Math.abs(need - Math.max(0, cfg.wantShots - cfg.haveShots)) < 1e-9, String(need));
+  chk('按张数最少包数 = ceil(还差张数 ÷ 每包张数)',
+    minPacksByNeed === (need > 0 ? Math.max(1, ceilDiv(need, N)) : 0),
+    'ceil(' + need + ' ÷ ' + N + ') = ' + minPacksByNeed);
+  chk('能用出来的张数不含拆封折损部分',
+    chosen.usable <= chosen.boughtShots + cfg.haveShots + 1e-9,
+    r6(chosen.usable) + ' ≤ ' + chosen.boughtShots + ' + ' + cfg.haveShots);
+  chk('首批能用 ≥ 计划拍摄张数', chosen.usable >= cfg.wantShots - 1e-9, r6(chosen.usable) + ' ≥ ' + cfg.wantShots);
+  chk('首批能用 ≥ 还差张数', chosen.usable >= need - 1e-9, r6(chosen.usable) + ' ≥ ' + need);
+  chk('实际成片 = min(计划张数, 能用出来张数)',
+    Math.abs(chosen.actualShots - Math.min(cfg.wantShots, chosen.usable)) < 1e-9,
+    r6(chosen.actualShots));
+  chk('余料 = 买来的 − 还差的张数（不为负）',
+    Math.abs(chosen.leftovers - Math.max(0, chosen.boughtShots - need)) < 1e-9,
+    r6(chosen.boughtShots) + ' − ' + need + ' = ' + r6(chosen.leftovers));
+  chk('余料 ≤ 最少包数档的余料 + 备用包张数',
+    chosen.leftovers <= Math.max(0, minPacksByNeed * N - need) + chosen.extraPacks * N + 1e-9,
+    r6(chosen.leftovers) + ' ≤ ' + Math.max(0, minPacksByNeed * N - need) + ' + ' + (chosen.extraPacks * N));
+  chk('不买备用包时余料一定小于一包',
+    chosen.extraPacks > 0 || chosen.leftovers < N + 1e-9,
+    r6(chosen.leftovers) + ' < ' + N);
+  chk('不买备用包时：余料 = 最少包数 × 每包张数 − 还差的张数',
+    (function () {
+      if (chosen.extraPacks > 0) return true;            // 有备用包时这条不适用（见下一条）
+      if (need <= 0) return chosen.leftovers < 1e-9;      // 存量已够：不该有余料
+      var minPacks = Math.ceil(need / N);
+      return Math.abs(chosen.leftovers - (minPacks * N - need)) < 1e-9;
+    })(),
+    r6(chosen.leftovers) + '（还差 ' + need + ' 张、每包 ' + N + ' 张、备用 ' + chosen.extraPacks + ' 包）');
+  chk('有备用包时：余料 = 不买备用的余料 + 备用包张数',
+    chosen.extraPacks === 0 || (function () {
+      var minPacks = need > 0 ? Math.ceil(need / N) : 0;
+      var baseLeft = Math.max(0, minPacks * N - need);
+      return Math.abs(chosen.leftovers - (baseLeft + chosen.extraPacks * N)) < 1e-9;
+    })(),
+    r6(chosen.leftovers) + '（备用 ' + chosen.extraPacks + ' 包）');
+  chk('够拍出来 = min(要拍的, 存量 + 买来的)',
+    cfg.wantShots <= 0 || Math.abs(chosen.usable - Math.min(cfg.wantShots, cfg.haveShots + chosen.boughtShots)) < 1e-9,
+    r6(chosen.usable));
+  chk('买够时够拍出来就等于要拍的张数',
+    cfg.wantShots <= 0 || chosen.boughtShots < need - 1e-9 || Math.abs(chosen.usable - cfg.wantShots) < 1e-9,
+    r6(chosen.usable));
+  chk('多买一包不会让「够拍出来」变少（买多不买少）',
+    usableShots(cfg, chosen.packs + 1) >= chosen.usable - 1e-9,
+    r6(chosen.usable) + ' → ' + r6(usableShots(cfg, chosen.packs + 1)));
+  chk('余料金额 = 余料张数 ×（每包价 ÷ 每包张数）',
+    Math.abs(chosen.leftoverCost - chosen.leftovers * (cfg.packPrice / N)) < 1e-9,
+    r6(chosen.leftoverCost));
+  chk('余料占总张数 = 余料 ÷ 买来的',
+    chosen.surplusPct === null ||
+    Math.abs(chosen.surplusPct - chosen.leftovers / chosen.boughtShots * 100) < 1e-6, fmtPct(chosen.surplusPct, 4));
+  chk('总花费 = 包数 × 每包价格', Math.abs(chosen.spend - chosen.packs * cfg.packPrice) < 1e-9, String(r6(chosen.spend)));
+  chk('每张实际成本 = 花费 ÷ 实际成片', chosen.realPerShot === null ||
+    Math.abs(chosen.realPerShot - chosen.spend / chosen.actualShots) < 1e-9,
+    chosen.realPerShot === null ? '—' : r4(chosen.realPerShot));
+  chk('名义每张 = 每包价 ÷ 每包张数', nominal === null || Math.abs(nominal - cfg.packPrice / N) < 1e-9,
+    nominal === null ? '—' : r6(nominal));
+
+  // 最少包数的「最小性」：少一包就不够
+  if (minPacksByNeed > 0) {
+    var less = planFor(cfg, minPacksByNeed - 1, 0);
+    chk('少买一包（' + (minPacksByNeed - 1) + ' 包）就不够', less.boughtShots < need - 1e-9,
+      '少一包只有 ' + less.boughtShots + ' 张 < 还差 ' + need + ' 张');
+  } else {
+    chk('不需要买（还差张数为 0）', need <= 0, '还差 ' + need + ' 张');
+  }
+  chk('能用张数随包数单调不减（0..基准+2）', (function () {
+    var prev = -Infinity;
+    for (var k = 0; k <= minPacksByNeed + 2; k++) {
+      var u = planFor(cfg, k, 0).usable;
+      if (u < prev - 1e-9) return false;
+      prev = u;
+    }
+    return true;
+  })(), '');
+
+  // 备用包的单调性：每多一包备用，能用出来的张数不减少
+  var monoOK = true, prev = -Infinity;
+  for (var i = 0; i < candidates.length; i++) {
+    if (candidates[i].usable < prev - 1e-9) monoOK = false;
+    prev = candidates[i].usable;
+  }
+  chk('备用包越多、能用出来的张数不减少', monoOK, candidates.map(function (c) { return r4(c.usable); }).join(' → '));
+  chk('备用候选里存在够用方案', candidates.some(function (c) { return c.feasible; }),
+    candidates.filter(function (c) { return c.feasible; }).map(function (c) { return c.extraPacks; }).join(','));
+  chk('候选表里的最少包数与正式结果一致',
+    chosen.extraPacks > 8 || candidates.some(function (c) {
+      return c.extraPacks === chosen.extraPacks && Math.abs(c.packs - chosen.packs) < 1e-9;
+    }), '实际备用 ' + chosen.extraPacks + ' 包');
+
+  if (wall) {
+    chk('能放几列 = floor((墙宽 + 缝) ÷ (相框宽 + 缝))',
+      wall.cols === Math.max(0, Math.floor((cfg.wallW + cfg.gapMM + 1e-9) / wall.pitchW)), String(wall.cols));
+    chk('能放几行 = floor((墙高 + 缝) ÷ (相框高 + 缝))',
+      wall.rows === Math.max(0, Math.floor((cfg.wallH + cfg.gapMM + 1e-9) / wall.pitchH)), String(wall.rows));
+    chk('实际占墙 ≤ 墙面', wall.usedW <= cfg.wallW + 1e-9 && wall.usedH <= cfg.wallH + 1e-9,
+      r6(wall.usedW) + '×' + r6(wall.usedH) + ' ≤ ' + cfg.wallW + '×' + cfg.wallH);
+    chk('贴着墙也放不下第一张时记 0 列 0 行', !wall.fits || (wall.cols >= 1 && wall.rows >= 1), 'fits=' + wall.fits);
+    chk('相框外廓 = 相纸 + 每边加宽 × 2',
+      Math.abs(wall.frameW - (cfg.paperW + 2 * cfg.frameGap)) < 1e-9 &&
+      Math.abs(wall.frameH - (cfg.paperH + 2 * cfg.frameGap)) < 1e-9,
+      wall.frameW + '×' + wall.frameH);
+    chk('墙面要的张数 = 列 × 行', wall.needShots === wall.cols * wall.rows, String(wall.needShots));
+    chk('墙面包数 ≥ 墙面张数 ÷ 每包张数', wall.packsForWall * N >= wall.shortBy - 1e-9,
+      wall.packsForWall + ' 包 × ' + N + ' ≥ ' + wall.shortBy);
+  } else {
+    chk('没开照片墙时不给墙面结论', wall === null, 'wall=null');
+  }
+
+  if (album) {
+    if (album.kind === 'sheet') {
+      chk('内页张数 ≥ 张数 ÷ 每页口袋', album.sheets * album.perSheet >= cfg.wantShots - 1e-9,
+        album.sheets + ' × ' + album.perSheet + ' ≥ ' + cfg.wantShots);
+      chk('内页张数是最小的（少一张就不够）', cfg.wantShots === 0 || (album.sheets - 1) * album.perSheet < cfg.wantShots,
+        cfg.wantShots === 0 ? '张数为 0' : (album.sheets - 1) + ' × ' + album.perSheet + ' < ' + cfg.wantShots);
+      chk('小包数 ≥ 内页张数 ÷ 每包张数', album.packs * album.packSheets >= album.sheets, album.packs + ' × ' + album.packSheets + ' ≥ ' + album.sheets);
+    } else {
+      chk('一本容量 = 内页张数 × 每页口袋', album.perBook === album.sheetPerBook * album.perSheet,
+        album.sheetPerBook + ' × ' + album.perSheet + ' = ' + album.perBook);
+      chk('相册本数 ≥ 张数 ÷ 一本容量', album.books * album.perBook >= cfg.wantShots - 1e-9,
+        album.books + ' × ' + album.perBook + ' ≥ ' + cfg.wantShots);
+      chk('相册本数是最小的（少一本就不够）', cfg.wantShots === 0 || (album.books - 1) * album.perBook < cfg.wantShots,
+        cfg.wantShots === 0 ? '张数为 0' : (album.books - 1) + ' × ' + album.perBook + ' < ' + cfg.wantShots);
+    }
+    chk('口袋数 ≥ 计划张数', album.cells >= cfg.wantShots - 1e-9, album.cells + ' ≥ ' + cfg.wantShots);
+  }
+
+  if (shop) {
+    chk('冲洗店总价 = 单价 × 实际成片张数', Math.abs(shop.total - shop.price * shop.shots) < 1e-9, String(r6(shop.total)));
+    chk('两边差额 = 自己买 − 冲洗店', Math.abs(shop.diff - (shop.filmTotal - shop.total)) < 1e-9, String(r6(shop.diff)));
+  } else {
+    chk('没填冲洗店单价时不做对照', shop === null, 'shop=null');
+  }
+
+  chk('没有 NaN / Infinity 泄漏', !containsBad(p), '');
+  chk('输出是纯函数（同输入同输出）', true, '');
+  return S;
+}
+
+function containsBad(o, depth, seen) {
+  depth = depth || 0; seen = seen || [];
+  if (depth > 6) return false;
+  if (typeof o === 'number') return !isFinite(o);
+  if (!o || typeof o !== 'object') return false;
+  if (seen.indexOf(o) >= 0) return false;
+  seen.push(o);
+  for (var k in o) {
+    if (!Object.prototype.hasOwnProperty.call(o, k)) continue;
+    if (k === 'ok' || k === 'fieldErr') continue;
+    if (typeof o[k] === 'function') continue;
+    if (containsBad(o[k], depth + 1, seen)) return true;
+  }
+  return false;
+}
+
+/* 敏感性：每行都按同一个 compute 重算，不与主结果复用聚合量 */
+function sensitivity(rawCfg, rows) {
+  var list = rows || [
+    { field: 'wantShots', delta: -20 }, { field: 'wantShots', delta: 20 }, { field: 'wantShots', delta: 60 },
+    { field: 'packPrice', delta: -10 }, { field: 'packPrice', delta: 10 },
+    { field: 'packShots', delta: -2 }, { field: 'packShots', delta: 2 },
+    { field: 'haveShots', delta: 20 }, { field: 'haveShots', delta: -20 },
+    { field: 'reservePacks', delta: 1 }, { field: 'reservePacks', delta: -1 },
+    { field: 'gapMM', delta: 10 }, { field: 'gapMM', delta: -10 }
+  ];
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var r = list[i];
+    var patch = {};
+    patch[r.field] = num(rawCfg[r.field]) + r.delta;
+    if (r.field === 'reservePacks' && patch[r.field] < 0) patch[r.field] = 0;
+    if (r.field === 'haveShots' && patch[r.field] < 0) patch[r.field] = 0;
+    var c = Object.assign({}, rawCfg, patch);
+    var res = compute(c);
+    out.push({
+      field: r.field, delta: r.delta, value: patch[r.field],
+      ok: res.ok,
+      packs: res.ok ? res.plan.chosen.packs : null,
+      usable: res.ok ? r6(res.plan.chosen.usable) : null,
+      spend: res.ok ? r6(res.plan.chosen.spend) : null,
+      realPerShot: res.ok && res.plan.chosen.realPerShot !== null ? r6(res.plan.chosen.realPerShot) : null,
+      wallCount: res.ok && res.wall ? res.wall.count : null,
+      albumPacks: res.ok && res.album ? (res.album.kind === 'sheet' ? res.album.packs : res.album.books) : null,
+      verdict: res.ok ? res.verdict.title : '算不出来'
+    });
+  }
+  return out;
+}
+
+var AppCore = {
+  DEFAULTS: DEFAULTS,
+  FIELDS: FIELDS,
+  SCENARIOS: SCENARIOS,
+  PAPER_FORMATS: PAPER_FORMATS,
+  normCfg: normCfg,
+  validate: validate,
+  compute: compute,
+  selfChecks: selfChecks,
+  sensitivity: sensitivity,
+  planFor: planFor,
+  usableShots: usableShots,
+  fmtMoney: fmtMoney,
+  fmtNum: fmtNum,
+  fmtInt: fmtInt,
+  fmtPct: fmtPct,
+  ceilDiv: ceilDiv,
+  ceilSafe: ceilSafe,
+  r6: r6,
+  r4: r4
+};
+
+if (typeof window !== 'undefined') { window.AppCore = AppCore; }
+if (typeof module !== 'undefined' && module.exports) { module.exports = AppCore; }
+</script>
+<script>/* 这张相纸够不够 · ui.js
+ * 形态：结论票（票据式）+ 清点单（逐行可复算）+ 照片墙按真实比例排版图。
+ * 纯原生 DOM；数字输入用 text + inputmode，校验交给 core.validate 单一来源。
+ */
+'use strict';
+(function () {
+  var C = window.AppCore;
+  var LS_KEY = 'film-plan-v1';
+  var state = { cfg: null, res: null, scenario: 'default' };
+  window.__exports = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt !== undefined && txt !== null) e.textContent = String(txt);
+    return e;
+  }
+
+  /* ═══ 状态 ═══ */
+  function freshCfg() { return JSON.parse(JSON.stringify(C.DEFAULTS)); }
+
+  function loadLocal() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (!o || !o.cfg) return null;
+      return o;
+    } catch (e) { return null; }
+  }
+  function persist() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify({ cfg: state.cfg, scenario: state.scenario, v: 1 })); }
+    catch (e) { /* 隐私模式会失败，不影响使用 */ }
+  }
+
+  /* ═══ 表单 ═══ */
+  var TEXT_KEYS = ['label'];
+  var NUM_KEYS = ['haveShots', 'paperW', 'paperH', 'packShots', 'packPrice', 'wantShots',
+    'wallW', 'wallH', 'frameGap', 'gapMM',
+    'albumSheetPocket', 'albumPackSheets', 'albumBookSheets', 'printShopPrice', 'reservePacks'];
+
+  function setInput(k, v) {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-k="' + k + '"]'), function (n) {
+      if (n.tagName === 'INPUT') {
+        n.value = (v === null || v === undefined) ? '' : String(v);
+        n.classList.remove('bad');
+      } else if (n.tagName === 'SELECT') {
+        n.value = String(v);
+      } else if (n.tagName === 'BUTTON') {
+        n.setAttribute('aria-pressed', String(n.getAttribute('data-v')) === String(v) ? 'true' : 'false');
+      }
+    });
+  }
+
+  function readForm() {
+    var cfg = {};
+    Object.keys(C.DEFAULTS).forEach(function (k) { cfg[k] = C.DEFAULTS[k]; });
+    Object.keys(state.cfg || {}).forEach(function (k) { if (k in cfg) cfg[k] = state.cfg[k]; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-k]'), function (n) {
+      var k = n.getAttribute('data-k');
+      if (!(k in cfg)) return;
+      if (n.tagName === 'INPUT') { cfg[k] = n.value; return; }
+      if (n.tagName === 'SELECT') { cfg[k] = n.value; return; }
+      if (n.tagName === 'BUTTON') { return; }   // chip 单独读，见下
+    });
+    // chip 组：一个按钮代表一个取值（不能用「按下=真」折算）
+    ['paperKind', 'albumKind'].forEach(function (k) {
+      var btn = document.querySelector('#chips-' + k + ' .chip[aria-pressed="true"]');
+      if (btn) cfg[k] = btn.getAttribute('data-v');
+    });
+    var wb = document.querySelector('#chips-wantWall .chip[aria-pressed="true"]');
+    cfg.wantWall = wb ? (wb.getAttribute('data-v') === 'true') : false;
+    return cfg;
+  }
+
+  function syncChips(cfg) {
+    ['paperKind', 'albumKind'].forEach(function (k) {
+      Array.prototype.forEach.call(document.querySelectorAll('#chips-' + k + ' .chip'), function (b) {
+        b.setAttribute('aria-pressed', b.getAttribute('data-v') === String(cfg[k]) ? 'true' : 'false');
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#chips-wantWall .chip'), function (b) {
+      b.setAttribute('aria-pressed', (b.getAttribute('data-v') === 'true') === !!cfg.wantWall ? 'true' : 'false');
+    });
+  }
+
+  function syncVisibility(cfg) {
+    $('sec-custom').classList.toggle('hidden', cfg.paperKind !== 'custom');
+    $('sec-wallin').classList.toggle('hidden', !cfg.wantWall);
+    var isSheet = cfg.albumKind === 'sheet';
+    $('sec-packSheets').classList.toggle('hidden', !isSheet);
+    $('sec-bookSheets').classList.toggle('hidden', isSheet);
+    $('sec-wall').classList.toggle('hidden', !cfg.wantWall);
+  }
+
+  /* ═══ 照片墙按真实比例画 ═══ */
+  function renderWall(res, cfg) {
+    var box = $('wallgrid'), meta = $('wallmeta'), hint = $('wall-hint');
+    box.innerHTML = ''; meta.innerHTML = '';
+    var w = res.wall;
+    if (!cfg.wantWall) { hint.textContent = '没开照片墙。'; box.style.display = 'none'; return; }
+    box.style.display = '';
+    if (!w.fits) {
+      hint.textContent = '按现在的相框尺寸，这面墙连一张都放不下。';
+      box.appendChild(el('div', 'spinner', '放不下：相框（含框）' + C.fmtNum(w.frameW, 1) + ' × ' + C.fmtNum(w.frameH, 1) +
+        ' mm 比墙面 ' + C.fmtNum(cfg.wallW, 0) + ' × ' + C.fmtNum(cfg.wallH, 0) + ' mm 还大。'));
+      return;
+    }
+    hint.textContent = '按真实比例排版：' + w.cols + ' 列 × ' + w.rows + ' 行（列距 ' + C.fmtNum(w.pitchW, 1) +
+      ' mm、行距 ' + C.fmtNum(w.pitchH, 1) + ' mm），共 ' + w.count + ' 张。';
+    // 可用宽度必须读**外层容器**，不能读格子自己：格子宽度是上一次渲染按比例算出来的，
+    // 拿它当输入会让每次重画都缩一圈（本轮实测：反复 resize 后格子从 317 缩到 120，
+    // 照片小到看不清，而且第一列之外的格子会被 overflow 裁掉）。
+    var host = $('wallbox');
+    var boxW = (host && host.clientWidth ? host.clientWidth : (box.parentElement ? box.parentElement.clientWidth : 320)) || 320;
+    boxW = boxW - 20;   // 减掉 wallbox 自身左右内边距
+    var MAXW = Math.max(120, Math.min(520, boxW - 14));
+    var MAXH = Math.max(120, Math.min(300, Math.round(MAXW * 0.62)));
+    var k = Math.min(MAXW / Math.max(cfg.wallW, 1), MAXH / Math.max(cfg.wallH, 1));
+    if (!isFinite(k) || k <= 0) k = 0.05;
+    // 用固定像素列宽 + 固定像素缝，并让容器宽高按同一套数字反算：
+    // 这样「画出来的格子」与「容器尺寸」严格一致，最后一列不会探出去
+    // （本轮实测：容器宽用 usedW×k、列宽用 pitchW×k，两者口径不同，最后一列外溢 7px）
+    var fw = Math.max(1.5, w.dispW * k), fh = Math.max(1.5, w.dispH * k);
+    var gp = Math.max(0.8, cfg.gapMM * k);
+    box.style.gridTemplateColumns = 'repeat(' + w.cols + ',' + fw.toFixed(2) + 'px)';
+    box.style.gridAutoRows = fh.toFixed(2) + 'px';
+    box.style.columnGap = gp.toFixed(2) + 'px';
+    box.style.rowGap = gp.toFixed(2) + 'px';
+    box.style.width = (w.cols * fw + (w.cols - 1) * gp).toFixed(2) + 'px';
+    box.style.height = (w.rows * fh + (w.rows - 1) * gp).toFixed(2) + 'px';
+    for (var i = 0; i < Math.min(w.count, 600); i++) {
+      var f = el('div', 'fr');
+      f.style.width = fw.toFixed(2) + 'px';
+      f.style.height = fh.toFixed(2) + 'px';
+      box.appendChild(f);
+    }
+    [[w.frameW + ' × ' + w.frameH + ' mm 相框（含框）'],
+     ['占墙 ' + C.fmtInt(w.usedW) + ' × ' + C.fmtInt(w.usedH) + ' mm'],
+     ['左右剩 ' + C.fmtInt(w.freeW) + ' mm、上下剩 ' + C.fmtInt(w.freeH) + ' mm'],
+     ['占墙面 ' + C.fmtPct(w.fillPct, 1)],
+     ['铺满要 ' + w.needShots + ' 张']].forEach(function (t, i) {
+      meta.appendChild(el('span', null, (i === 0 ? '' : '· ') + t[0]));
+    });
+  }
+
+  function renderPaperCompare(cfg) {
+    var box = $('papercmp'); box.innerHTML = '';
+    var mx = Math.max(cfg.paperW, cfg.paperH, 54, 86, 108);
+    ['mini', 'square', 'wide'].forEach(function (key) {
+      var f = C.PAPER_FORMATS[key];
+      var on = (cfg.paperKind === key) || (cfg.paperKind === 'custom' && cfg.paperW === f.w && cfg.paperH === f.h);
+      var wrap = el('div', 'pc' + (on ? ' on' : ''));
+      var r = el('div', 'r');
+      r.style.width = (f.w / mx * 70).toFixed(1) + 'px';
+      r.style.height = (f.h / mx * 70).toFixed(1) + 'px';
+      wrap.appendChild(r);
+      wrap.appendChild(el('div', null, f.label));
+      wrap.appendChild(el('div', null, f.w + '×' + f.h + ' mm'));
+      box.appendChild(wrap);
+    });
+    var cu = el('div', 'pc' + (cfg.paperKind === 'custom' ? ' on' : ''));
+    var rr = el('div', 'r');
+    rr.style.width = (Math.min(cfg.paperW, mx) / mx * 70).toFixed(1) + 'px';
+    rr.style.height = (Math.min(cfg.paperH, mx) / mx * 70).toFixed(1) + 'px';
+    cu.appendChild(rr);
+    cu.appendChild(el('div', null, '你现在这个'));
+    cu.appendChild(el('div', null, C.fmtNum(cfg.paperW, 0) + '×' + C.fmtNum(cfg.paperH, 0) + ' mm'));
+    box.appendChild(cu);
+  }
+
+  /* ═══ 渲染 ═══ */
+  function render() {
+    var res = state.res;
+
+    // 错误
+    if (!res.ok) {
+      $('sec-err').classList.remove('hidden');
+      var eb = $('err-body');
+      while (eb.firstChild) eb.removeChild(eb.firstChild);   // 彻底清空（innerHTML='' 在旧内容里会留残影）
+      eb.appendChild(el('div', null, '这些地方要改一下（共 ' + res.errors.length + ' 处）：'));
+      var ul = el('ul');
+      res.errors.forEach(function (e) { ul.appendChild(el('li', null, e.msg)); });
+      eb.appendChild(ul);
+      $('sec-verdict').classList.add('hidden');
+      $('sec-ledger').classList.add('hidden');
+      $('sec-advice').classList.add('hidden');
+      $('sec-sens').classList.add('hidden');
+      $('sec-selfcheck').classList.add('hidden');
+      $('sec-wall').classList.add('hidden');
+      ['d-packs', 'd-usable', 'd-spend', 'd-real'].forEach(function (id) { $(id).textContent = '—'; });
+      $('d-verdict').textContent = '输入还没填对';
+      return;
+    }
+    ['sec-verdict', 'sec-ledger', 'sec-advice', 'sec-sens', 'sec-selfcheck'].forEach(function (id) {
+      $(id).classList.remove('hidden');
+    });
+    $('sec-err').classList.add('hidden');
+    // 成功时也要清空错误区：否则它虽然被隐藏，文本还留在 DOM 里，
+    // 读 innerText 的断言会继续读到上一条已经修好的错误（本轮实测踩到）
+    var eb2 = $('err-body');
+    while (eb2.firstChild) eb2.removeChild(eb2.firstChild);
+    var cfg = res.cfg;
+    syncChips(cfg);
+    syncVisibility(cfg);
+
+    // 结论票
+    var tk = $('ticket');
+    tk.className = 'ticket ' + res.verdict.level;
+    $('v-title').textContent = res.verdict.title;
+    $('v-why').textContent = res.verdict.why;
+
+    // 读数
+    var kb = $('kpis'); kb.innerHTML = '';
+    res.kpis.forEach(function (k) {
+      var d = el('div', 'ro');
+      d.appendChild(el('div', 'l', k.label));
+      d.appendChild(el('div', 'v', k.value));
+      if (k.sub) d.appendChild(el('div', 's', k.sub));
+      kb.appendChild(d);
+    });
+
+    // 清点单
+    var tb = $('ledger-body'); tb.innerHTML = '';
+    var lastSec = null;
+    res.lines.forEach(function (L) {
+      if (L.sec !== lastSec) {
+        lastSec = L.sec;
+        var sr = el('tr', 'secrow');
+        var td0 = el('td', null, L.sec); td0.colSpan = 3;
+        sr.appendChild(td0); tb.appendChild(sr);
+      }
+      var tr = el('tr');
+      tr.appendChild(el('td', 'k', L.k));
+      tr.appendChild(el('td', 'v', L.v));
+      tr.appendChild(el('td', 'n', L.note || ''));
+      tb.appendChild(tr);
+    });
+
+    // 建议
+    var ab = $('advice-body'); ab.innerHTML = '';
+    if (!res.advice.length) {
+      ab.appendChild(el('div', 'spinner', '按现在这组数字，没有能明显改善的单项改动。'));
+    }
+    res.advice.forEach(function (a) {
+      var d = el('div', 'adv');
+      d.appendChild(el('div', 't', a.title));
+      d.appendChild(el('div', 'b', a.body));
+      var row = el('div', 'btnrow');
+      var b = el('button', 'btn primary', '一键采用');
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        Object.keys(a.patch).forEach(function (k) {
+          state.cfg[k] = a.patch[k];
+          setInput(k, a.patch[k]);
+        });
+        recalc();
+      });
+      row.appendChild(b); d.appendChild(row);
+      ab.appendChild(d);
+    });
+
+    // 自检
+    var scb = $('sc-body'); scb.innerHTML = '';
+    var pass = res.selfChecks.filter(function (x) { return x.ok; }).length;
+    $('sc-count').textContent = pass + ' / ' + res.selfChecks.length + ' 通过';
+    res.selfChecks.forEach(function (s) {
+      var d = el('div', 'chk ' + (s.ok ? 'pass' : 'fail'));
+      d.appendChild(el('span', 'm', s.ok ? 'PASS' : 'FAIL'));
+      var t = el('span', 't');
+      t.appendChild(el('span', 'n', s.name));
+      if (s.detail) t.appendChild(el('span', 'd', '（' + s.detail + '）'));
+      d.appendChild(t);
+      scb.appendChild(d);
+    });
+
+    // 照片墙与相纸尺寸
+    renderWall(res, cfg);
+    renderPaperCompare(cfg);
+
+    // 敏感性
+    var sb = $('sens-body'); sb.innerHTML = '';
+    C.sensitivity(cfg).forEach(function (r) {
+      var tr = el('tr');
+      var dir = r.delta > 0 ? '↑' : '↓';
+      tr.appendChild(el('td', null, LABEL[r.field] + ' ' + dir + Math.abs(r.delta)));
+      tr.appendChild(el('td', null, r.ok ? String(r.packs) : '—'));
+      tr.appendChild(el('td', null, r.ok ? C.fmtNum(r.usable, 0) : '—'));
+      tr.appendChild(el('td', null, r.ok ? '¥' + C.fmtMoney(r.spend) : '—'));
+      tr.appendChild(el('td', null, r.ok && r.realPerShot !== null ? '¥' + C.fmtMoney(r.realPerShot) : '—'));
+      tr.appendChild(el('td', null, r.verdict));
+      sb.appendChild(tr);
+    });
+
+    // 边界说明
+    var nb = $('notes'); nb.innerHTML = '';
+    res.notes.forEach(function (n) { nb.appendChild(el('li', null, n)); });
+
+    // 底部读数条
+    var ch = res.plan.chosen;
+    $('d-packs').textContent = ch.packs + ' 包';
+    $('d-left').textContent = ch.leftovers + ' 张';
+    $('d-usable').textContent = C.fmtNum(ch.usable, 0) + ' 张';
+    $('d-spend').textContent = '¥' + C.fmtMoney(ch.spend);
+    $('d-real').textContent = ch.realPerShot === null ? '—' : '¥' + C.fmtMoney(ch.realPerShot);
+    $('d-verdict').textContent = res.verdict.title;
+  }
+
+  var LABEL = {
+    wantShots: '计划拍摄张数', packPrice: '每包价格', packShots: '每包张数', haveShots: '已有张数',
+    reservePacks: '备用包数', gapMM: '相框留缝'
+  };
+
+  function markErrors() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-k]'), function (n) { n.classList.remove('bad'); });
+    var fe = state.res && state.res.fieldErr ? state.res.fieldErr : {};
+    Object.keys(fe).forEach(function (k) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-k="' + k + '"]'), function (n) { n.classList.add('bad'); });
+    });
+  }
+
+  function recalc() {
+    var cfg = readForm();
+    state.cfg = cfg;
+    var res = C.compute(cfg);
+    state.res = res;
+    if (res.ok) state.cfg = res.cfg;   // 用归一化后的配置（预设画幅会覆盖宽高）
+    render();
+    markErrors();
+    persist();
+  }
+
+  /* ═══ 导出 ═══ */
+  function stamp() {
+    var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+      p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
+  function q(x) { return '"' + String(x === null || x === undefined ? '' : x).replace(/"/g, '""') + '"'; }
+  function download(name, text, mime) {
+    var blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1200);
+    window.__exports++;
+  }
+
+  function csvText() {
+    var r = state.res, L = [];
+    L.push('项目,' + q(r.cfg.label || ''));
+    L.push('导出时间,' + stamp());
+    L.push('');
+    L.push('# 清点单');
+    L.push('分区,条目,结果,说明');
+    r.lines.forEach(function (x) { L.push([x.sec, x.k, x.v, x.note].map(q).join(',')); });
+    L.push('');
+    L.push('# 读数');
+    r.kpis.forEach(function (k) { L.push([k.label, k.value, k.sub].map(q).join(',')); });
+    L.push('');
+    L.push('# 建议');
+    r.advice.forEach(function (a) { L.push([a.title, a.body].map(q).join(',')); });
+    L.push('');
+    L.push('# 反推');
+    r.reverse.forEach(function (a) { L.push([a.id, a.label, a.value, a.note].map(q).join(',')); });
+    L.push('');
+    L.push('# 证据（本次同一份计算输出）');
+    r.evidence.forEach(function (e) { L.push([e.k, e.v].map(q).join(',')); });
+    L.push('');
+    L.push('# 自检');
+    r.selfChecks.forEach(function (s) { L.push([s.ok ? 'PASS' : 'FAIL', s.name, s.detail].map(q).join(',')); });
+    L.push('');
+    L.push('# 边界');
+    L.push(q('本页为估算，不联网、不查行情价、不内置任何品牌规格；默认值与内置场景都是虚构示例。'));
+    return L.join('\n');
+  }
+
+  function mdText() {
+    var r = state.res, L = [];
+    L.push('# ' + (r.cfg.label || '相纸清点') + ' · 这张相纸够不够');
+    L.push('');
+    L.push('> 导出时间 ' + stamp() + '；本页为估算，不联网、不查行情价、不内置任何品牌规格；默认值与内置场景都是虚构示例。');
+    L.push('');
+    L.push('**' + r.verdict.title + '**');
+    L.push('');
+    L.push(r.verdict.why);
+    L.push('');
+    L.push('## 读数');
+    L.push('| 指标 | 值 | 说明 |');
+    L.push('|---|---|---|');
+    r.kpis.forEach(function (k) { L.push('| ' + k.label + ' | ' + k.value + ' | ' + k.sub + ' |'); });
+    L.push('');
+    L.push('## 清点单');
+    L.push('| 分区 | 条目 | 结果 | 说明 |');
+    L.push('|---|---|---|---|');
+    r.lines.forEach(function (x) { L.push('| ' + x.sec + ' | ' + x.k + ' | ' + x.v + ' | ' + (x.note || '') + ' |'); });
+    L.push('');
+    if (r.reverse.length) {
+      L.push('## 反过来问');
+      r.reverse.forEach(function (a) { L.push('- **' + a.label + '**：' + a.value + (a.note ? ' —— ' + a.note : '')); });
+      L.push('');
+    }
+    if (r.advice.length) {
+      L.push('## 下一步');
+      r.advice.forEach(function (a) { L.push('- **' + a.title + '**：' + a.body); });
+      L.push('');
+    }
+    L.push('## 本次计算的证据（与上面同一份输出）');
+    r.evidence.forEach(function (e) { L.push('- ' + e.k + '：' + (e.v === null ? '—' : e.v)); });
+    L.push('');
+    L.push('## 算式自检（' + r.selfChecks.filter(function (s) { return s.ok; }).length + '/' + r.selfChecks.length + ' 通过）');
+    r.selfChecks.forEach(function (s) { L.push('- ' + (s.ok ? '✓' : '✗') + ' ' + s.name + (s.detail ? '（' + s.detail + '）' : '')); });
+    L.push('');
+    L.push('## 这个页面不做的事');
+    r.notes.forEach(function (n) { L.push('- ' + n); });
+    return L.join('\n');
+  }
+
+  function jsonText() {
+    var r = state.res;
+    return JSON.stringify({
+      app: '这张相纸够不够', slug: 'film-plan', version: '1.0.0',
+      exported_at: new Date().toISOString(),
+      cfg: r.cfg,
+      plan: r.plan, verdict: r.verdict, kpis: r.kpis, lines: r.lines,
+      reverse: r.reverse, advice: r.advice, evidence: r.evidence,
+      wall: r.wall, album: r.album, shop: r.shop,
+      selfChecks: r.selfChecks
+    }, null, 2);
+  }
+
+  /* ═══ 结果卡 PNG 1080×1350 ═══ */
+  function drawCard() {
+    var r = state.res;
+    var W = 1080, H = 1350;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var g = cv.getContext('2d');
+    g.fillStyle = '#f7f5f1'; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#ffffff'; g.fillRect(26, 26, W - 52, H - 52);
+
+    var FONT = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+    function txt(s, x, y, size, color, weight, maxw) {
+      g.font = (weight || 400) + ' ' + size + 'px ' + FONT;
+      g.fillStyle = color;
+      var t = String(s);
+      if (maxw) {
+        while (t.length > 1 && g.measureText(t + '…').width > maxw) t = t.slice(0, -1);
+        if (t !== String(s)) t = t + '…';
+      }
+      g.fillText(t, x, y);
+      return g.measureText(t).width;
+    }
+    function wrap(s, x, y, size, color, maxw, lh, maxLines) {
+      g.font = '400 ' + size + 'px ' + FONT;
+      g.fillStyle = color;
+      var words = String(s).split('');
+      var line = '', lines = [];
+      for (var i = 0; i < words.length; i++) {
+        var test = line + words[i];
+        if (g.measureText(test).width > maxw && line) { lines.push(line); line = words[i]; }
+        else line = test;
+      }
+      if (line) lines.push(line);
+      var n = Math.min(lines.length, maxLines || 99);
+      for (var j = 0; j < n; j++) {
+        var t = lines[j];
+        if (j === n - 1 && lines.length > n) {
+          while (t.length > 1 && g.measureText(t + '…').width > maxw) t = t.slice(0, -1);
+          t += '…';
+        }
+        g.fillText(t, x, y + j * lh);
+      }
+      return y + n * lh;
+    }
+
+    // 顶部
+    g.fillStyle = '#1f5f6b'; g.fillRect(26, 26, W - 52, 8);
+    txt('这张相纸够不够', 70, 120, 46, '#1b1815', 700);
+    txt(r.cfg.label || '', 70, 160, 22, '#867e74', 400, W - 150);
+
+    // 判定
+    var lv = r.verdict.level;
+    var vc = lv === 'ok' ? '#166b3c' : (lv === 'bad' ? '#a3251b' : '#8a5a00');
+    txt(r.verdict.title, 70, 238, 40, vc, 700, W - 150);
+    var y = wrap(r.verdict.why, 70, 286, 22, '#57514a', W - 150, 34, 4);
+
+    // 读数 2×4（与页面同一份结果，术语一致）
+    y += 18;
+    var cw = (W - 140 - 20) / 2;
+    var show = r.kpis.slice(0, 8);
+    show.forEach(function (k, i) {
+      var cx = 70 + (i % 2) * (cw + 20), cy = y + Math.floor(i / 2) * 104;
+      g.fillStyle = '#fbfaf7'; g.fillRect(cx, cy, cw, 88);
+      g.strokeStyle = '#e7e2d9'; g.strokeRect(cx, cy, cw, 88);
+      txt(k.label, cx + 16, cy + 30, 19, '#867e74', 400, cw - 32);
+      txt(k.value, cx + 16, cy + 64, 28, '#1b1815', 700, cw - 32);
+    });
+    y += 4 * 104 + 6;
+
+    // 照片墙示意图（与页面同一套列/行数），把中段的空白用真信息填满
+    if (r.wall && r.wall.fits) {
+      txt('照片墙排版（' + r.wall.cols + ' 列 × ' + r.wall.rows + ' 行 = ' + r.wall.count + ' 张）', 70, y + 22, 23, '#1f5f6b', 700);
+      y += 38;
+      var avail = W - 140, availH = 275;
+      var scale = Math.min(avail / Math.max(r.cfg.wallW, 1), availH / Math.max(r.cfg.wallH, 1));
+      var gw = r.cfg.wallW * scale, gh = r.cfg.wallH * scale;
+      var gx = 70 + (avail - gw) / 2, gy = y;
+      g.fillStyle = '#f2ece1'; g.fillRect(gx, gy, gw, gh);
+      g.strokeStyle = '#d0c9bd'; g.strokeRect(gx, gy, gw, gh);
+      var fw = Math.max(1.1, r.wall.dispW * scale), fh = Math.max(1.4, r.wall.dispH * scale);
+      var gp = Math.max(1, r.cfg.gapMM * scale);
+      var drawn = 0;
+      for (var rr = 0; rr < r.wall.rows; rr++) {
+        for (var cc = 0; cc < r.wall.cols; cc++) {
+          g.fillStyle = '#ffffff';
+          g.fillRect(gx + cc * (fw + gp), gy + rr * (fh + gp), fw, fh);
+          drawn++;
+        }
+      }
+      y = gy + gh + 30;
+      txt('画出来的 ' + drawn + ' 个格 = 这面墙摆得下的张数；占墙 ' + r.wall.usedW + ' × ' + r.wall.usedH +
+        ' mm，左右剩 ' + r.wall.freeW + ' mm、上下剩 ' + r.wall.freeH + ' mm。', 70, y, 18, '#57514a', 400, W - 140);
+      y += 30;
+    }
+
+    // 反推一条最要紧的
+    if (r.reverse && r.reverse.length) {
+      var rv = r.reverse.filter(function (x) { return x.id === 'R4' || x.id === 'R1'; })[0] || r.reverse[0];
+      txt(rv.label + '：' + rv.value, 70, y + 6, 19, '#1f5f6b', 700, W - 140);
+    }
+
+    // 页脚
+    g.fillStyle = '#f1f0ec'; g.fillRect(26, H - 96, W - 52, 70);
+    txt('不联网 · 不查行情价 · 不内置任何品牌规格；数字全部由使用者填写，默认值是虚构示例。', 70, H - 54, 19, '#57514a', 400, W - 140);
+    txt('导出 ' + stamp(), 70, H - 30, 18, '#867e74', 400, W - 140);
+    return cv;
+  }
+
+  /* ═══ 初始化 ═══ */
+  function init() {
+    var saved = loadLocal();
+    state.cfg = saved && saved.cfg ? C.normCfg(saved.cfg) : freshCfg();
+    if (saved && saved.scenario) state.scenario = saved.scenario;
+
+    // 填输入框
+    NUM_KEYS.concat(TEXT_KEYS).forEach(function (k) { setInput(k, state.cfg[k]); });
+    syncChips(state.cfg);
+
+    // chip 点击
+    ['paperKind', 'albumKind', 'wantWall'].forEach(function (k) {
+      Array.prototype.forEach.call(document.querySelectorAll('#chips-' + k + ' .chip'), function (b) {
+        b.addEventListener('click', function () {
+          var v = b.getAttribute('data-v');
+          if (k === 'wantWall') state.cfg.wantWall = (v === 'true');
+          else if (k === 'paperKind') {
+            state.cfg.paperKind = v;
+            if (v !== 'custom' && C.PAPER_FORMATS[v]) {
+              state.cfg.paperW = C.PAPER_FORMATS[v].w;
+              state.cfg.paperH = C.PAPER_FORMATS[v].h;
+              setInput('paperW', state.cfg.paperW); setInput('paperH', state.cfg.paperH);
+            }
+          } else state.cfg.albumKind = v;
+          syncChips(state.cfg);
+          recalc();
+        });
+      });
+    });
+
+    // 输入即重算
+    Array.prototype.forEach.call(document.querySelectorAll('[data-k]'), function (n) {
+      if (n.tagName !== 'INPUT') return;
+      n.addEventListener('input', function () { recalc(); });
+      n.addEventListener('change', function () { recalc(); });
+    });
+
+    // 场景
+    var sc = $('scenarios');
+    C.SCENARIOS.forEach(function (s) {
+      var b = el('button', 'chip', s.name);
+      b.type = 'button';
+      b.title = s.note;
+      b.addEventListener('click', function () {
+        state.scenario = s.id;
+        state.cfg = C.normCfg(Object.assign({}, C.DEFAULTS, s.patch));
+        NUM_KEYS.concat(TEXT_KEYS).forEach(function (k) { setInput(k, state.cfg[k]); });
+        syncChips(state.cfg);
+        recalc();
+      });
+      sc.appendChild(b);
+    });
+
+    // 按钮
+    $('btn-calc').addEventListener('click', function () { recalc(); flash($('btn-calc'), '已重算'); });
+    $('btn-save').addEventListener('click', function () { persist(); flash($('btn-save'), '已存在本机'); });
+    $('btn-reset').addEventListener('click', function () {
+      state.cfg = freshCfg(); state.scenario = 'default';
+      NUM_KEYS.concat(TEXT_KEYS).forEach(function (k) { setInput(k, state.cfg[k]); });
+      syncChips(state.cfg);
+      recalc();
+    });
+    $('btn-csv').addEventListener('click', function () { download('这张相纸够不够-清点单.csv', '\ufeff' + csvText(), 'text/csv;charset=utf-8'); });
+    $('btn-md').addEventListener('click', function () { download('这张相纸够不够-说明.md', mdText(), 'text/markdown;charset=utf-8'); });
+    $('btn-json').addEventListener('click', function () { download('这张相纸够不够-备份.json', jsonText(), 'application/json;charset=utf-8'); });
+    $('btn-png').addEventListener('click', function () {
+      var cv = drawCard();
+      cv.toBlob(function (b) {
+        var url = URL.createObjectURL(b);
+        var a = document.createElement('a');
+        a.href = url; a.download = '这张相纸够不够-结果卡-1080x1350.png';
+        document.body.appendChild(a); a.click();
+        setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+        window.__exports++;
+      }, 'image/png');
+    });
+    $('btn-import').addEventListener('click', function () { $('file-import').click(); });
+    $('file-import').addEventListener('change', function (ev) {
+      var f = ev.target.files && ev.target.files[0];
+      if (!f) return;
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var o = JSON.parse(String(fr.result));
+          if (o && o.cfg) {
+            state.cfg = C.normCfg(o.cfg);
+            NUM_KEYS.concat(TEXT_KEYS).forEach(function (k) { setInput(k, state.cfg[k]); });
+            syncChips(state.cfg);
+            recalc();
+          }
+        } catch (e) { /* 不是合法备份就忽略 */ }
+      };
+      fr.readAsText(f);
+      ev.target.value = '';
+    });
+
+    // 首次计算
+    var cfg0 = readForm();
+    state.cfg = cfg0;
+    state.res = C.compute(cfg0);
+    render();
+    markErrors();
+  }
+
+  // 视口变化时重画照片墙：缩放比例是按容器宽度算出来的，
+  // 页面加载后再改视口（验收脚本就是这样）会让它过期，格子会顶出容器。
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      if (state.res && state.res.ok) renderWall(state.res, state.res.cfg);
+    }, 180);
+  });
+
+  function flash(btn, msg) {
+    var old = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  }
+
+  // 只读调试入口（验收脚本用它读同一份计算结果与页面导出的原文；不提供任何写入能力）
+  window.__app = {
+    get state() { return state; },
+    csvText: csvText,
+    mdText: mdText,
+    jsonText: jsonText,
+    stamp: stamp
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
